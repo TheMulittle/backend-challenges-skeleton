@@ -1,0 +1,43 @@
+wrapper {
+    gradleVersion = '7.5.1'
+}
+
+group 'com.toptal.backend'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+dependencies {
+    implementation "org.springframework:spring-test:5.3.23"
+    implementation 'org.springframework:spring-webflux:5.3.23'
+    implementation 'io.projectreactor.netty:reactor-netty-http:1.0.23'
+    implementation "com.jayway.jsonpath:json-path:2.7.0"
+    
+    testImplementation platform("org.junit:junit-bom:5.9.0")
+    testImplementation platform("io.cucumber:cucumber-bom:7.8.0")
+
+    testImplementation "io.cucumber:cucumber-java"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine"
+    testImplementation 'io.cucumber:cucumber-picocontainer'
+
+    testImplementation "org.junit.platform:junit-platform-suite"
+    testImplementation "org.junit.jupiter:junit-jupiter"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    // Work around. Gradle does not include enough information to disambiguate
+    // between different examples and scenarios.
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
