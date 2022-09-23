@@ -2,6 +2,10 @@ package com.mulittle.skeleton.backend.context;
 
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
+import lombok.Getter;
+import lombok.Setter;
+@Setter
+@Getter
 public class RequestContext {
   public ResponseSpec response;
   public Object requestBody;

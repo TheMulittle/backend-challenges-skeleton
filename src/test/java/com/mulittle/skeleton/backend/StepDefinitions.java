@@ -1,43 +1,41 @@
 package com.mulittle.skeleton.backend;
 
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import com.mulittle.skeleton.backend.context.RequestContext;
+import com.mulittle.skeleton.backend.model.Company;
+import com.mulittle.skeleton.backend.services.CompaniesService;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class StepDefinitions {
 
+    CompaniesService companiesService;
+
     RequestContext requestContext;
 
-    public StepDefinitions(RequestContext requestContext) {
+    public StepDefinitions(RequestContext requestContext, CompaniesService companiesService) {
         this.requestContext = requestContext;
+        this.companiesService = companiesService;
     }
 
-    @When("I register a company whose name starts with {string}")
-    public void registerCompanyStartingWith(String s) {
-        // Write code here that turns the phrase above into concrete actions
-        ResponseSpec response = WebTestClient.bindToServer()
-        .baseUrl("http://localhost:8001")
-        .build()
-        .post()
-        .uri("/v1/companies")
-        .bodyValue("{name: \"AZ Company\"}")
-        .exchange();
+    @ParameterType(".*")
+    public Company company(String name) {
+        return Company.builder().name(name).build();
+    }
+
+    @When("I register a company whose name starts with {company}")
+    public void registerCompanyStartingWith(Company company) {
+        ResponseSpec response = companiesService.registerCompany(company);
+        requestContext.requestBody = company;
         requestContext.response = response;
     }
 
     @When("I register the company whose name starts with {string} again")
     public void I_register_the_company_whose_name_starts_with_again(String s) {
-        ResponseSpec response = WebTestClient.bindToServer()
-        .baseUrl("http://localhost:8001")
-        .build()
-        .post()
-        .uri("/v1/companies")
-        .bodyValue("{name: \"AZ Company\"}")
-        .exchange();
+        ResponseSpec response = companiesService.registerCompany(requestContext.getRequestBodyAs(Company.class));
         requestContext.response = response;
     }
     

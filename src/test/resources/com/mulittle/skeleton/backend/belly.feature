@@ -1,11 +1,9 @@
-Feature: Company registring 
+Feature: Company registration 
 
-  Scenario: a new company can be registred
-    When I register a company whose name starts with 'New Company'
+  Scenario: a company can be registred only once
+    When I register a company whose name starts with 'AZ Company'
     Then the response status code is 201
     And the field 'name' of the response payload is equal to the field 'name' of the request payload
-
-  Scenario: a new company can be registred
-    When I register the company whose name starts with 'New Company' again
+    When I register the company whose name starts with 'AZ Company' again
     Then the response status code is 400
-    And the field 'err' of the response payload is equal to 'AZ Company already exists'
+    And the field 'err' of the response payload is equal to 'Company already exists'
