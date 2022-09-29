@@ -13,22 +13,31 @@ java {
   }
 }
 
+project.ext {
+    lombokVersion = '1.18.20'
+    jacksonVersion = '2.13.4'
+    springVersion = '5.3.23'
+    nettyVersion = '1.0.23'
+    jsonpathVersion = '2.7.0'
+    junitVersion = '5.9.1'
+    cucumberVersion = '7.8.0'
+    slf4jVersion = '2.0.2'
+}
+
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    runtimeOnly 'org.aspectj:aspectjrt:1.9.9.1'
-    runtimeOnly 'org.aspectj:aspectjweaver:1.9.9.1'
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
-    implementation "org.springframework:spring-test:5.3.23"
-    implementation 'org.springframework:spring-aop:5.3.23'
-    implementation 'org.springframework:spring-webflux:5.3.23'
-    implementation 'io.projectreactor.netty:reactor-netty-http:1.0.23'
-    implementation "com.jayway.jsonpath:json-path:2.7.0"
+    implementation "org.springframework:spring-test:${springVersion}"
+    implementation "org.springframework:spring-aop:${springVersion}"
+    implementation "org.springframework:spring-webflux:${springVersion}"
+    implementation "io.projectreactor.netty:reactor-netty-http:${nettyVersion}"
+    implementation "com.jayway.jsonpath:json-path:${jsonpathVersion}"
     
-    testImplementation platform("org.junit:junit-bom:5.9.0")
-    testImplementation platform("io.cucumber:cucumber-bom:7.8.0")
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+    testImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
 
     testImplementation "io.cucumber:cucumber-java"
     testImplementation "io.cucumber:cucumber-junit-platform-engine"
@@ -37,8 +46,8 @@ dependencies {
     testImplementation "org.junit.platform:junit-platform-suite"
     testImplementation "org.junit.jupiter:junit-jupiter"
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.2'
-    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.2'
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
 }
 
 repositories {
@@ -50,9 +59,6 @@ tasks.withType(Test) {
     useJUnitPlatform()
     // Work around. Gradle does not include enough information to disambiguate
     // between different examples and scenarios.
-    systemProperty("cucumber.junit-platform.naming-strategy", "long")
-}
-
-test {
+    systemProperty "cucumber.junit-platform.naming-strategy", "long"
     systemProperty "BASE_URL", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
 }
