@@ -14,11 +14,15 @@ java {
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
     compileOnly 'org.projectlombok:lombok:1.18.24'
+    runtimeOnly 'org.aspectj:aspectjrt:1.9.9.1'
+    runtimeOnly 'org.aspectj:aspectjweaver:1.9.9.1'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
 
     implementation "org.springframework:spring-test:5.3.23"
+    implementation 'org.springframework:spring-aop:5.3.23'
     implementation 'org.springframework:spring-webflux:5.3.23'
     implementation 'io.projectreactor.netty:reactor-netty-http:1.0.23'
     implementation "com.jayway.jsonpath:json-path:2.7.0"
@@ -32,6 +36,9 @@ dependencies {
 
     testImplementation "org.junit.platform:junit-platform-suite"
     testImplementation "org.junit.jupiter:junit-jupiter"
+
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.2'
+    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.2'
 }
 
 repositories {
@@ -44,4 +51,8 @@ tasks.withType(Test) {
     // Work around. Gradle does not include enough information to disambiguate
     // between different examples and scenarios.
     systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+
+test {
+    systemProperty "BASE_URL", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
 }
