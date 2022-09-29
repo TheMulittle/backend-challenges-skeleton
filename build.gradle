@@ -2,7 +2,7 @@ wrapper {
     gradleVersion = '7.5.1'
 }
 
-group 'com.toptal.backend'
+group 'com.mulittle.skeleton.backend'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
