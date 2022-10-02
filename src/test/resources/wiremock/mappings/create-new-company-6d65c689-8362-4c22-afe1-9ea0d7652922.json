@@ -1,0 +1,42 @@
+{
+  "id" : "6d65c689-8362-4c22-afe1-9ea0d7652922",
+  "name" : "Create new company",
+  "request" : {
+    "url" : "/v1/companies",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression" : "$.name",
+        "contains" : "AZ Company"
+      }
+    } ]
+  },
+  "response" : {
+    "status" : 201,
+    "body" : "{\n  id: {{randomValue length=10 type='NUMERIC'}},\n  name:{{jsonPath request.body '$.name'}}\n}",
+    "headers" : { },
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "6d65c689-8362-4c22-afe1-9ea0d7652922",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "Started",
+  "newScenarioState" : "2 companies",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:39:51.402Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      },
+      "updated" : {
+        "at" : "2021-01-04T17:50:17.104Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 2,
+  "postServeActions" : [ ]
+}

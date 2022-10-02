@@ -1,0 +1,38 @@
+{
+  "id" : "7453fa80-ccf0-416c-aeb7-5f22497f0e38",
+  "name" : "Create new company - Same company",
+  "request" : {
+    "url" : "/v1/companies",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\n  \"id\": 234,\n  \"name\": \"Az Tech\"\n}"
+    } ]
+  },
+  "response" : {
+    "status" : 400,
+    "body" : "{\n  \"err\": \"Company already exists\"\n}",
+    "headers" : { }
+  },
+  "uuid" : "7453fa80-ccf0-416c-aeb7-5f22497f0e38",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "2 companies",
+  "newScenarioState" : "2 companies",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:39:51.402Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      },
+      "updated" : {
+        "at" : "2021-01-04T17:50:17.104Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 8,
+  "postServeActions" : [ ]
+}

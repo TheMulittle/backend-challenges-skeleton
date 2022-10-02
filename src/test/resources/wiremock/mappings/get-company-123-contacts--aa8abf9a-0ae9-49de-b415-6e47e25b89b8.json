@@ -1,0 +1,38 @@
+{
+  "id" : "aa8abf9a-0ae9-49de-b415-6e47e25b89b8",
+  "name" : "GET company 123 contacts ",
+  "request" : {
+    "urlPath" : "/v1/contacts",
+    "method" : "GET",
+    "queryParameters" : {
+      "companyId" : {
+        "equalTo" : "123"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"contacts\": [\n    {\n      \"id\": \"11111\",\n      \"firstName\": \"Tom\",\n      \"lastName\": \"Smith\",\n      \"email\": \"tom.smith@example.com\",\n      \"dateAdded\": \"2021-01-03\",\n      \"companyId\": \"123\"\n    },\n    {\n      \"id\": \"22222\",\n      \"firstName\": \"Suki\",\n      \"lastName\": \"Patel\",\n      \"email\": \"spatel@example.com\",\n      \"dateAdded\": \"2020-11-12\",\n      \"companyId\": \"123\"\n    }\n  ]\n}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "aa8abf9a-0ae9-49de-b415-6e47e25b89b8",
+  "persistent" : true,
+  "priority" : 3,
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T13:08:07.456Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      },
+      "updated" : {
+        "at" : "2021-01-04T13:08:16.081Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 6
+}

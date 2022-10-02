@@ -1,0 +1,42 @@
+{
+  "id" : "bb470f6f-116d-4462-ab00-7ce6d1cc2cb3",
+  "name" : "Create new company - Existing company",
+  "request" : {
+    "url" : "/v1/companies",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression" : "$.name",
+        "contains" : "AZ Company"
+      }
+    } ]
+  },
+  "response" : {
+    "status" : 400,
+    "body" : "{\n  \"err\": \"{{jsonPath request.body '$.name'}} already exists\"\n}",
+    "headers" : { },
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "bb470f6f-116d-4462-ab00-7ce6d1cc2cb3",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "2 companies",
+  "newScenarioState" : "2 companies",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:39:51.402Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      },
+      "updated" : {
+        "at" : "2021-01-04T17:50:17.104Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 2,
+  "postServeActions" : [ ]
+}

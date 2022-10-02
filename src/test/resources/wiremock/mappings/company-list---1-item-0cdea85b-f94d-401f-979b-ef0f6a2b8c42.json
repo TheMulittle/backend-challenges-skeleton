@@ -1,0 +1,30 @@
+{
+  "id" : "0cdea85b-f94d-401f-979b-ef0f6a2b8c42",
+  "name" : "Company list - 1 item",
+  "request" : {
+    "urlPath" : "/v1/companies",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"companies\": [\n    {\n      \"id\": 123,\n      \"name\": \"Boring Corp\"\n    }\n  ]\n}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "0cdea85b-f94d-401f-979b-ef0f6a2b8c42",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "Started",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:23:14.87Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 3
+}

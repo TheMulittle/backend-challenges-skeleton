@@ -1,0 +1,8 @@
+{
+  "services" : [ {
+    "id" : "v2nzq",
+    "name" : "Skeleton",
+    "port" : 8001,
+    "rootDir" : "wiremock"
+  } ]
+}

@@ -1,0 +1,30 @@
+{
+  "id" : "537e4d3c-90b8-47e3-982a-06b9d1f29067",
+  "name" : "Company list - 2 items",
+  "request" : {
+    "urlPath" : "/v1/companies",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"companies\": [\n    {\n      \"id\": 123,\n      \"name\": \"Boring Corp\"\n    },\n    {\n      \"id\": 234,\n      \"name\": \"Az Tech\" \n    }\n  ]\n}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "537e4d3c-90b8-47e3-982a-06b9d1f29067",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "2 companies",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:23:56.255Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 2
+}
