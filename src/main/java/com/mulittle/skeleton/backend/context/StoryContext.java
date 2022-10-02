@@ -1,12 +1,14 @@
 package com.mulittle.skeleton.backend.context;
 
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import lombok.Getter;
 import lombok.Setter;
 @Setter
 @Getter
-public class RequestContext {
+@Component
+public class StoryContext {
   public ResponseSpec response;
   public Object requestBody;
 

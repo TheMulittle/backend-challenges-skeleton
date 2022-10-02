@@ -30,18 +30,25 @@ dependencies {
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
-    implementation "org.springframework:spring-test:${springVersion}"
-    implementation "org.springframework:spring-aop:${springVersion}"
-    implementation "org.springframework:spring-webflux:${springVersion}"
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.4')
+    
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+    implementation 'org.springframework.boot:spring-boot-starter-test:2.7.4'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:2.7.4'
     implementation "io.projectreactor.netty:reactor-netty-http:${nettyVersion}"
     implementation "com.jayway.jsonpath:json-path:${jsonpathVersion}"
     
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
 
+
     testImplementation "io.cucumber:cucumber-java"
     testImplementation "io.cucumber:cucumber-junit-platform-engine"
-    testImplementation 'io.cucumber:cucumber-picocontainer'
+    testImplementation 'io.cucumber:cucumber-spring'
 
     testImplementation "org.junit.platform:junit-platform-suite"
     testImplementation "org.junit.jupiter:junit-jupiter"
@@ -61,4 +68,7 @@ tasks.withType(Test) {
     // between different examples and scenarios.
     systemProperty "cucumber.junit-platform.naming-strategy", "long"
     systemProperty "BASE_URL", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
+    testLogging {
+        showStandardStreams = true
+    }
 }

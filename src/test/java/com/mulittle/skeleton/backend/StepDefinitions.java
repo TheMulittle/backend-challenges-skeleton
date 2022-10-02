@@ -1,8 +1,9 @@
 package com.mulittle.skeleton.backend;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
-import com.mulittle.skeleton.backend.context.RequestContext;
+import com.mulittle.skeleton.backend.context.StoryContext;
 import com.mulittle.skeleton.backend.model.Company;
 import com.mulittle.skeleton.backend.services.CompaniesService;
 
@@ -12,11 +13,12 @@ import io.cucumber.java.en.When;
 
 public class StepDefinitions {
 
-    CompaniesService companiesService;
+    private final CompaniesService companiesService;
 
-    RequestContext requestContext;
+    private final StoryContext requestContext;
 
-    public StepDefinitions(RequestContext requestContext, CompaniesService companiesService) {
+    @Autowired
+    public StepDefinitions(StoryContext requestContext, CompaniesService companiesService) {
         this.requestContext = requestContext;
         this.companiesService = companiesService;
     }

@@ -16,3 +16,7 @@ build
 out
 bin
 gradle
+
+#wiremock
+
+*wiremock-studio*
