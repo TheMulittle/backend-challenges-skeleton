@@ -43,18 +43,20 @@ dependencies {
     implementation "com.jayway.jsonpath:json-path:${jsonpathVersion}"
     
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
-    testImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
+    implementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
 
 
-    testImplementation "io.cucumber:cucumber-java"
-    testImplementation "io.cucumber:cucumber-junit-platform-engine"
-    testImplementation 'io.cucumber:cucumber-spring'
+    implementation "io.cucumber:cucumber-java"
+    implementation "io.cucumber:cucumber-junit-platform-engine"
+    implementation 'io.cucumber:cucumber-spring'
 
     testImplementation "org.junit.platform:junit-platform-suite"
     testImplementation "org.junit.jupiter:junit-jupiter"
 
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
+
+    implementation 'com.aventstack:extentreports:5.0.9'
 }
 
 repositories {

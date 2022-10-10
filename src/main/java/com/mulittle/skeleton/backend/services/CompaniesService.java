@@ -1,8 +1,9 @@
 package com.mulittle.skeleton.backend.services;
 
-import java.net.URI;
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import com.mulittle.skeleton.backend.model.Company;
 import com.mulittle.skeleton.backend.model.Urls;
 
 @Component
+@Scope(SCOPE_CUCUMBER_GLUE)
 public class CompaniesService {
 
   public static final String COMPANIES = "/companies";

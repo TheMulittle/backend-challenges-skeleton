@@ -1,10 +1,12 @@
 package com.mulittle.skeleton.backend;
 
-import java.nio.charset.StandardCharsets;
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+
 import java.util.Map;
 
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -13,17 +15,18 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
-import com.mulittle.skeleton.backend.context.StepsContext;
+import com.mulittle.skeleton.backend.context.StepContext;
 
 import reactor.core.publisher.Flux;
 
 @Component
+@Scope(SCOPE_CUCUMBER_GLUE)
 public class ContextPopulatingJsonEncoder extends Jackson2JsonEncoder {
 
-  public StepsContext context;
+  public StepContext context;
   
   @Autowired
-  public ContextPopulatingJsonEncoder(StepsContext context) {
+  public ContextPopulatingJsonEncoder(StepContext context) {
     this.context = context;
   }
 
