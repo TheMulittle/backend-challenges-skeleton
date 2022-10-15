@@ -7,13 +7,13 @@ import java.util.regex.Pattern;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.GherkinKeyword;
-import com.aventstack.extentreports.gherkin.model.Feature;
-import com.aventstack.extentreports.gherkin.model.Scenario;
+import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import io.cucumber.messages.types.TestCaseFinished;
 import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -22,6 +22,7 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 
@@ -30,8 +31,10 @@ public class Reporter implements ConcurrentEventListener {
     private final ExtentSparkReporter spark;
     private final ExtentReports extent;
 
-    Map<String, ExtentTest> features = new ConcurrentHashMap<String, ExtentTest>();
-    Map<String, ExtentTest> scenarios = new ConcurrentHashMap<String, ExtentTest>();
+    private static Map<String, ExtentTest> features = new ConcurrentHashMap<String, ExtentTest>();
+    private static Map<String, ExtentTest> scenarios = new ConcurrentHashMap<String, ExtentTest>();
+    private static ThreadLocal<TestStep> testStep = new ThreadLocal<>();
+    private static ThreadLocal<Result> testStepResult = new ThreadLocal<>();
 
     public Reporter(String path) {
         spark = new ExtentSparkReporter(path);
@@ -53,6 +56,14 @@ public class Reporter implements ConcurrentEventListener {
                 e.printStackTrace();
             }
         });
+        publisher.registerHandlerFor(EmbedEvent.class, event -> {
+            try {
+                embed(event);
+            } catch (ClassNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
     };
 
 
@@ -71,41 +82,66 @@ public class Reporter implements ConcurrentEventListener {
         Pattern pattern = Pattern.compile("Feature:(.*)");
         Matcher matcher = pattern.matcher(event.getSource());
         matcher.find();
-        features.put(event.getUri().toString(), extent.createTest(Feature.class, matcher.group(1).trim()));
+        features.put(event.getUri().toString(), extent.createTest(matcher.group(1).trim()));
     };
 
 
     private void scenarioStarted(TestCaseStarted event) {
         ExtentTest feature = features.get(event.getTestCase().getUri().toString());
-        ExtentTest scenario = feature.createNode(Scenario.class, event.getTestCase().getName());
+        ExtentTest scenario = feature.createNode(event.getTestCase().getName());
         scenarios.put(event.getTestCase().getName(), scenario);
     };
 
     private void scenarioFinished(TestCaseFinished event) {
-
+        
     };
 
     private void stepStarted(TestStepStarted event) {
-
-    };
-
-
-    private void stepFinished(TestStepFinished event) throws ClassNotFoundException {
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            ExtentTest scenario = scenarios.get(event.getTestCase().getName()); 
-            PickleStepTestStep stepEvent = (PickleStepTestStep) event.getTestStep();
-            Step step = stepEvent.getStep();
-            Result stepResult = event.getResult();
-            ExtentTest stepNode = scenario.createNode(new GherkinKeyword(step.getKeyword()), step.getText());
-
-
-            if(stepResult.getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {
-                stepNode.log(com.aventstack.extentreports.Status.PASS,"Passed");
-            } else {
-                stepNode.log(com.aventstack.extentreports.Status.FAIL, "Failed");
-            }
+        if(event.getTestStep() instanceof PickleStepTestStep) {
+            testStep.set(event.getTestStep());
         }
     };
 
 
+    private void stepFinished(TestStepFinished event) throws ClassNotFoundException {
+        if(event.getTestStep() instanceof PickleStepTestStep) {
+            testStepResult.set(event.getResult());
+        }
+    };
+
+    private void embed(EmbedEvent event) throws ClassNotFoundException {
+        if (testStep.get() instanceof PickleStepTestStep) {
+            PickleStepTestStep pickleTestStep = (PickleStepTestStep) testStep.get();
+            Step step = pickleTestStep.getStep();
+            ExtentTest scenario = scenarios.get(event.getTestCase().getName()); 
+            ExtentTest stepNode = scenario.createNode(step.getKeyword() + " " + step.getText());
+            io.cucumber.plugin.event.Status resultStatus = testStepResult.get().getStatus();
+            updateStepNodeResult(stepNode, resultStatus);
+            addPayloadInformation(stepNode, new String(event.getData()));
+        }
+    }
+
+    private void updateStepNodeResult(ExtentTest stepNode, io.cucumber.plugin.event.Status resultStatus) {
+        switch (resultStatus) {
+            case PASSED:
+                stepNode.fail("Step passed");
+                break;
+            case FAILED:
+                stepNode.skip("Step skipped");
+                break;
+            case SKIPPED:
+                stepNode.skip("Step skipped");
+                break;
+            case PENDING:
+            case UNDEFINED:
+                stepNode.fail("Step not implemented");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void addPayloadInformation(ExtentTest stepNode, String payload) {
+        stepNode.info(MarkupHelper.createCodeBlock(payload, CodeLanguage.JSON));
+    }
 }

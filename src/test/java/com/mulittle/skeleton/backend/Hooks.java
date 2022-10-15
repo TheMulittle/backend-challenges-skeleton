@@ -3,20 +3,19 @@ package com.mulittle.skeleton.backend;
 import com.mulittle.skeleton.backend.context.StepContext;
 
 import io.cucumber.java.AfterStep;
-import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 
 public class Hooks {
 
-  public StepContext stepsContext;
+  public StepContext stepContext;
 
-  public Hooks(StepContext stepsContext) {
-    this.stepsContext = stepsContext;
+  public Hooks(StepContext stepContext) {
+    this.stepContext = stepContext;
   }
 
-  @BeforeStep
-  public void register() {
-    
+  @AfterStep
+  public void attachRequest(Scenario scenario) {
+    scenario.attach(stepContext.body, "application/json",null);
   }
   
 }
