@@ -1,17 +1,20 @@
 package com.mulittle.skeleton.backend.reporters;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.util.SerializationUtils;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.mulittle.skeleton.backend.model.AbstractAttachment;
 
-import io.cucumber.messages.types.TestCaseFinished;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
@@ -52,7 +55,6 @@ public class Reporter implements ConcurrentEventListener {
             try {
                 stepFinished(event);
             } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
@@ -60,13 +62,10 @@ public class Reporter implements ConcurrentEventListener {
             try {
                 embed(event);
             } catch (ClassNotFoundException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
     };
-
-
 
     private void runStarted(TestRunStarted event) {
         extent.attachReporter(spark);
@@ -92,10 +91,6 @@ public class Reporter implements ConcurrentEventListener {
         scenarios.put(event.getTestCase().getName(), scenario);
     };
 
-    private void scenarioFinished(TestCaseFinished event) {
-        
-    };
-
     private void stepStarted(TestStepStarted event) {
         if(event.getTestStep() instanceof PickleStepTestStep) {
             testStep.set(event.getTestStep());
@@ -117,17 +112,17 @@ public class Reporter implements ConcurrentEventListener {
             ExtentTest stepNode = scenario.createNode(step.getKeyword() + " " + step.getText());
             io.cucumber.plugin.event.Status resultStatus = testStepResult.get().getStatus();
             updateStepNodeResult(stepNode, resultStatus);
-            addPayloadInformation(stepNode, new String(event.getData()));
+            addPayloadInformation(stepNode, event.getData());
         }
     }
 
     private void updateStepNodeResult(ExtentTest stepNode, io.cucumber.plugin.event.Status resultStatus) {
         switch (resultStatus) {
             case PASSED:
-                stepNode.fail("Step passed");
+                stepNode.pass("Step passed");
                 break;
             case FAILED:
-                stepNode.skip("Step skipped");
+                stepNode.fail("Step failed");
                 break;
             case SKIPPED:
                 stepNode.skip("Step skipped");
@@ -141,7 +136,11 @@ public class Reporter implements ConcurrentEventListener {
         }
     }
 
-    private void addPayloadInformation(ExtentTest stepNode, String payload) {
-        stepNode.info(MarkupHelper.createCodeBlock(payload, CodeLanguage.JSON));
+    private void addPayloadInformation(ExtentTest stepNode, byte[] payloadBytes) {
+        List<AbstractAttachment> atachments = (List<AbstractAttachment>) SerializationUtils.deserialize(payloadBytes);
+        atachments.forEach(attachment -> {
+            stepNode.info(MarkupHelper.createCodeBlock(attachment.metaDataToString()));
+            stepNode.info(MarkupHelper.createCodeBlock(attachment.getBody(),CodeLanguage.JSON));
+        });
     }
 }

@@ -15,26 +15,28 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
-import com.mulittle.skeleton.backend.context.StepContext;
+import com.mulittle.skeleton.backend.context.EvidenceContext;
+import com.mulittle.skeleton.backend.model.AbstractAttachment;
 
 import reactor.core.publisher.Flux;
 
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)
-public class ContextPopulatingJsonEncoder extends Jackson2JsonEncoder {
+public class ContextAwareJsonEncoder extends Jackson2JsonEncoder {
 
-  public StepContext context;
+  public EvidenceContext context;
   
   @Autowired
-  public ContextPopulatingJsonEncoder(StepContext context) {
+  public ContextAwareJsonEncoder(EvidenceContext context) {
     this.context = context;
   }
 
   @Override
 public Flux<DataBuffer> encode(Publisher<?> inputStream, DataBufferFactory bufferFactory,
     ResolvableType elementType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
-    System.out.println(context);
-    return super.encode(inputStream, bufferFactory, elementType, mimeType, hints).doOnNext(db -> context.body = new String(extractBytes(db)));
+    AbstractAttachment attachment = context.getAttachments().get(context.getAttachments().size() - 1);
+    return super.encode(inputStream, bufferFactory, elementType, mimeType, hints)
+      .doOnNext(db -> attachment.setBody(new String(extractBytes(db))));
   }
 
   /**

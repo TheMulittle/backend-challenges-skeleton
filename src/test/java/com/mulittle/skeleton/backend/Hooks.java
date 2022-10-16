@@ -1,21 +1,29 @@
 package com.mulittle.skeleton.backend;
 
-import com.mulittle.skeleton.backend.context.StepContext;
+import org.springframework.util.SerializationUtils;
+
+import com.mulittle.skeleton.backend.context.EvidenceContext;
 
 import io.cucumber.java.AfterStep;
+import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 
 public class Hooks {
 
-  public StepContext stepContext;
+  public EvidenceContext evidenceContext;
 
-  public Hooks(StepContext stepContext) {
-    this.stepContext = stepContext;
+  public Hooks(EvidenceContext evidenceContext) {
+    this.evidenceContext = evidenceContext;
+  }
+
+  @BeforeStep
+  public void clearEvidenceContext() {
+    evidenceContext.getAttachments().clear();
   }
 
   @AfterStep
   public void attachRequest(Scenario scenario) {
-    scenario.attach(stepContext.body, "application/json",null);
+    scenario.attach(SerializationUtils.serialize(evidenceContext.getAttachments()), "text/plain", null);
   }
   
 }
