@@ -36,8 +36,10 @@ public class Reporter implements ConcurrentEventListener {
 
     private static Map<String, ExtentTest> features = new ConcurrentHashMap<String, ExtentTest>();
     private static Map<String, ExtentTest> scenarios = new ConcurrentHashMap<String, ExtentTest>();
+    private static ThreadLocal<ExtentTest> stepNode = new ThreadLocal<>();
     private static ThreadLocal<TestStep> testStep = new ThreadLocal<>();
     private static ThreadLocal<Result> testStepResult = new ThreadLocal<>();
+
 
     public Reporter(String path) {
         spark = new ExtentSparkReporter(path);
@@ -93,54 +95,52 @@ public class Reporter implements ConcurrentEventListener {
 
     private void stepStarted(TestStepStarted event) {
         if(event.getTestStep() instanceof PickleStepTestStep) {
-            testStep.set(event.getTestStep());
+            PickleStepTestStep pickleTestStep = (PickleStepTestStep) event.getTestStep();
+            Step step = pickleTestStep.getStep();
+            ExtentTest scenario = scenarios.get(event.getTestCase().getName()); 
+            stepNode.set(scenario.createNode("<b>" + step.getKeyword() + "</b>" + " " + step.getText()));
+            testStep.set(pickleTestStep);
         }
     };
 
-
     private void stepFinished(TestStepFinished event) throws ClassNotFoundException {
         if(event.getTestStep() instanceof PickleStepTestStep) {
-            testStepResult.set(event.getResult());
+            Result resultStatus = event.getResult();
+            updateStepNodeResult(resultStatus);
         }
     };
 
     private void embed(EmbedEvent event) throws ClassNotFoundException {
         if (testStep.get() instanceof PickleStepTestStep) {
-            PickleStepTestStep pickleTestStep = (PickleStepTestStep) testStep.get();
-            Step step = pickleTestStep.getStep();
-            ExtentTest scenario = scenarios.get(event.getTestCase().getName()); 
-            ExtentTest stepNode = scenario.createNode(step.getKeyword() + " " + step.getText());
-            io.cucumber.plugin.event.Status resultStatus = testStepResult.get().getStatus();
-            updateStepNodeResult(stepNode, resultStatus);
-            addPayloadInformation(stepNode, event.getData());
+            addPayloadInformation(event.getData());
         }
     }
 
-    private void updateStepNodeResult(ExtentTest stepNode, io.cucumber.plugin.event.Status resultStatus) {
-        switch (resultStatus) {
+    private void updateStepNodeResult(Result testResult) {
+        switch (testResult.getStatus()) {
             case PASSED:
-                stepNode.pass("Step passed");
+                stepNode.get().pass("Step passed");
                 break;
             case FAILED:
-                stepNode.fail("Step failed");
+                stepNode.get().fail("Step failed<br/>:" + testResult.getError());
                 break;
             case SKIPPED:
-                stepNode.skip("Step skipped");
+                stepNode.get().skip("Step skipped");
                 break;
             case PENDING:
             case UNDEFINED:
-                stepNode.fail("Step not implemented");
+                stepNode.get().fail("Step not implemented");
                 break;
             default:
                 break;
         }
     }
 
-    private void addPayloadInformation(ExtentTest stepNode, byte[] payloadBytes) {
+    private void addPayloadInformation(byte[] payloadBytes) {
         List<AbstractAttachment> atachments = (List<AbstractAttachment>) SerializationUtils.deserialize(payloadBytes);
         atachments.forEach(attachment -> {
-            stepNode.info(MarkupHelper.createCodeBlock(attachment.metaDataToString()));
-            stepNode.info(MarkupHelper.createCodeBlock(attachment.getBody(),CodeLanguage.JSON));
+            stepNode.get().info(MarkupHelper.createCodeBlock(attachment.metaDataToString()));
+            stepNode.get().info(MarkupHelper.createCodeBlock(attachment.getBody(),CodeLanguage.JSON));
         });
     }
 }
