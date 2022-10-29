@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend;
+package com.mulittle.skeleton.backend.webclient;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
