@@ -28,6 +28,12 @@ public class StepDefinitions {
         return Company.builder().name(name).build();
     }
 
+    @When("I retrieve all companies")
+    public void retrieveCompanies() {
+        ResponseSpec response = companiesService.retrieveCompanies();
+        requestContext.response = response;
+    }
+
     @When("I register a company whose name starts with {company}")
     public void registerCompanyStartingWith(Company company) {
         ResponseSpec response = companiesService.registerCompany(company);

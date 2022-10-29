@@ -78,5 +78,12 @@ public class CompaniesService {
         .bodyValue(company)
         .exchange();
   }
+
+  public ResponseSpec retrieveCompanies() {
+    return baseClient
+    .get()
+    .uri(COMPANIES)
+    .exchange();
+  }
   
 }

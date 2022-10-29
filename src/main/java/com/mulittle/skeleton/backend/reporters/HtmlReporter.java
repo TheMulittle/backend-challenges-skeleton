@@ -29,7 +29,7 @@ import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 
-public class Reporter implements ConcurrentEventListener {
+public class HtmlReporter implements ConcurrentEventListener {
 
     private final ExtentSparkReporter spark;
     private final ExtentReports extent;
@@ -41,7 +41,7 @@ public class Reporter implements ConcurrentEventListener {
     private static ThreadLocal<Result> testStepResult = new ThreadLocal<>();
 
 
-    public Reporter(String path) {
+    public HtmlReporter(String path) {
         spark = new ExtentSparkReporter(path);
         extent = new ExtentReports();
     }
