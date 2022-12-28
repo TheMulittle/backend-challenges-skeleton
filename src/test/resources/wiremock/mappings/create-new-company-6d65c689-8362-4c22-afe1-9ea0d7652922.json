@@ -7,13 +7,13 @@
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
         "expression" : "$.name",
-        "contains" : "AZ Company"
+        "contains" : "Not registred company"
       }
     } ]
   },
   "response" : {
     "status" : 201,
-    "body" : "{\n  id: {{randomValue length=10 type='NUMERIC'}},\n  name:{{jsonPath request.body '$.name'}}\n}",
+    "body" : "{\n  \"id\": 10,\n  \"name\": \"{{jsonPath request.body '$.name'}}\"\n}",
     "headers" : { },
     "transformers" : [ "response-template" ]
   },
@@ -37,6 +37,6 @@
       }
     }
   },
-  "insertionIndex" : 2,
+  "insertionIndex" : 4,
   "postServeActions" : [ ]
 }

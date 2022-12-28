@@ -7,7 +7,7 @@
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
         "expression" : "$.name",
-        "contains" : "AZ Company"
+        "contains" : "Not registred company"
       }
     } ]
   },
