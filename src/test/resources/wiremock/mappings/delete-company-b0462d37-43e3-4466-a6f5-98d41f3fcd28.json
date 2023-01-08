@@ -1,24 +1,22 @@
 {
-  "id" : "7453fa80-ccf0-416c-aeb7-5f22497f0e38",
-  "name" : "Create new company - Same company",
+  "id" : "b0462d37-43e3-4466-a6f5-98d41f3fcd28",
+  "name" : "Delete Company",
   "request" : {
-    "url" : "/v1/companies",
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "equalToJson" : "{\n  \"id\": 234,\n  \"name\": \"Az Tech\"\n}"
-    } ]
+    "urlPathPattern" : "/v1/companies/[0-9]{1,10}",
+    "method" : "DELETE"
   },
   "response" : {
-    "status" : 400,
-    "body" : "{\n  \"err\": \"Company already exists\"\n}",
-    "headers" : { }
+    "status" : 204,
+    "body" : "",
+    "headers" : { },
+    "transformers" : [ "response-template" ]
   },
-  "uuid" : "7453fa80-ccf0-416c-aeb7-5f22497f0e38",
+  "uuid" : "b0462d37-43e3-4466-a6f5-98d41f3fcd28",
   "persistent" : true,
   "priority" : 5,
   "scenarioName" : "Companies",
   "requiredScenarioState" : "2 companies",
-  "newScenarioState" : "2 companies",
+  "newScenarioState" : "Started",
   "metadata" : {
     "mocklab" : {
       "created" : {
@@ -33,6 +31,6 @@
       }
     }
   },
-  "insertionIndex" : 8,
+  "insertionIndex" : 10,
   "postServeActions" : [ ]
 }

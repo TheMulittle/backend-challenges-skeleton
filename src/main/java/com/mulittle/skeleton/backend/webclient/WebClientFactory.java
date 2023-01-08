@@ -28,12 +28,12 @@ public class WebClientFactory {
   private final WebTestClient.Builder baseClient;
 
   @Autowired
-  public WebClientFactory(ContextAwareJsonEncoder encoder, EvidenceContext evidenceContext) {
+  public WebClientFactory(ContextAwareJsonEncoder encoder, EvidenceContext evidenceContext, Urls urls) {
     this.baseClient = WebTestClient.bindToServer().codecs(clientDefaultCodecsConfigurer -> {
       clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonEncoder(encoder);
       clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(new ObjectMapper(), MediaType.APPLICATION_JSON));
     })
-    .baseUrl(Urls.BASE_URL)
+    .baseUrl(urls.getBaseUrl())
     .filter(addRequestDataToAttachment(evidenceContext))
     .filter(addResponseDataToAttachment(evidenceContext));
   }

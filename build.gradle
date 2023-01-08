@@ -76,7 +76,8 @@ tasks.withType(Test) {
     // Work around. Gradle does not include enough information to disambiguate
     // between different examples and scenarios.
     systemProperty "cucumber.junit-platform.naming-strategy", "long"
-    systemProperty "BASE_URL", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
+    systemProperty "baseUrl", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
+    systemProperty "org.freemarker.loggerLibrary", "none"
     testLogging {
         showStandardStreams = true
     }
@@ -91,6 +92,5 @@ task wip(type: Test) {
 }
 
 task it(type: Test) {
-   include '**/RunCucumberTests.class'  
+   include '**/RunCucumberTest.class'  
 }
-

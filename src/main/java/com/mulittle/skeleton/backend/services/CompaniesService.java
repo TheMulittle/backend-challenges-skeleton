@@ -35,6 +35,17 @@ public class CompaniesService {
         .exchange();
   }
 
+  public ResponseSpec deleteCompany(Integer id) {
+    return baseClient
+        .delete()
+        .uri(uriBuilder -> uriBuilder.path(COMPANY).build(id))
+        .exchange();
+  }
+
+  public ResponseSpec deleteCompany(Company company) {
+    return deleteCompany(company.getId());
+  }
+
   public ResponseSpec retrieveCompanies() {
     return baseClient
     .get()

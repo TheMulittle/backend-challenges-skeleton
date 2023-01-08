@@ -1,5 +1,6 @@
 package com.mulittle.skeleton.backend.integration;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -7,7 +8,10 @@ import org.assertj.core.api.Assertions;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulittle.skeleton.backend.context.PlaceholderContext;
 import com.mulittle.skeleton.backend.context.StoryContext;
 import com.mulittle.skeleton.backend.model.Company;
@@ -36,6 +40,10 @@ public class CompanyStepDefinitions {
         return JsonMapper.jsonStringToMap(body);
     }
 
+    private <T> T deserializeByteArrayTo(byte[] x, Class<T> clazz) throws StreamReadException, DatabindException, IOException {
+        return new ObjectMapper().readValue(x, clazz);
+    }
+
     @Given("a company that is not registred")
     public void createCompany() {
         String companyName = "Not registred company" + UUID.randomUUID();
@@ -49,10 +57,18 @@ public class CompanyStepDefinitions {
         requestContext.response = response;
     }
 
-    @When("I register the company")
+    @When("I register the company( again)")
     public void registerCompany() {
         ResponseSpec response = companiesService
                 .registerCompany(placeholderContext.getObjectAs("company", Company.class));
+        requestContext.response = response;
+    }
+
+    @When("I delete the company")
+    public void deleteCompany() throws StreamReadException, DatabindException, IOException {
+        ResponseSpec lastResponse = (ResponseSpec) requestContext.response;
+        ResponseSpec response = companiesService
+                .deleteCompany(deserializeByteArrayTo(lastResponse.expectBody().returnResult().getResponseBodyContent(), Company.class));
         requestContext.response = response;
     }
 

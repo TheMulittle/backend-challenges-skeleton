@@ -14,13 +14,14 @@ Feature: Company registration
     """
     When I register the company again
     Then the response status code is 400
-    And the response body is 
+    And response body is 
     """
     {
       "err": "This company already exists"
     }
     """
 
+  @wip
   Scenario: a company can be deleted
     When I register the company
     And I delete the company
