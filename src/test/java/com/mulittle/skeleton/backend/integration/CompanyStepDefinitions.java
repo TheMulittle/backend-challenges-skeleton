@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend;
+package com.mulittle.skeleton.backend.integration;
 
 import java.util.Map;
 import java.util.UUID;

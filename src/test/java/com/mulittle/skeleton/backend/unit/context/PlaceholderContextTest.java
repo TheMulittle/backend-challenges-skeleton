@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.context;
+package com.mulittle.skeleton.backend.unit.context;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mulittle.skeleton.backend.context.PlaceholderContext;
 
 @TestInstance(Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)

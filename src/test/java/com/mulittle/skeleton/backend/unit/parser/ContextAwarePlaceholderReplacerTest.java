@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.parser;
+package com.mulittle.skeleton.backend.unit.parser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -10,17 +10,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulittle.skeleton.backend.context.PlaceholderContext;
+import com.mulittle.skeleton.backend.parser.ContextAwarePlaceholderReplacer;
 
 @ExtendWith(MockitoExtension.class)
 public class ContextAwarePlaceholderReplacerTest {

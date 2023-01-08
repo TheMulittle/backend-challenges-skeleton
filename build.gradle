@@ -81,3 +81,16 @@ tasks.withType(Test) {
         showStandardStreams = true
     }
 }
+
+task ut(type: Test) {
+   include '**/UnitTestSuite.class'  
+}
+
+task wip(type: Test) {
+   include '**/RunWipTests.class'  
+}
+
+task it(type: Test) {
+   include '**/RunCucumberTests.class'  
+}
+
