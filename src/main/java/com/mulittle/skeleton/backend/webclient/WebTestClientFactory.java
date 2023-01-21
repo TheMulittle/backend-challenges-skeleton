@@ -23,12 +23,12 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)
-public class WebClientFactory {
+public class WebTestClientFactory {
 
   private final WebTestClient.Builder baseClient;
 
   @Autowired
-  public WebClientFactory(ContextAwareJsonEncoder encoder, EvidenceContext evidenceContext, Urls urls) {
+  public WebTestClientFactory(ContextAwareJsonEncoder encoder, EvidenceContext evidenceContext, Urls urls) {
     this.baseClient = WebTestClient.bindToServer().codecs(clientDefaultCodecsConfigurer -> {
       clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonEncoder(encoder);
       clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(new ObjectMapper(), MediaType.APPLICATION_JSON));

@@ -10,7 +10,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import com.mulittle.skeleton.backend.model.Company;
-import com.mulittle.skeleton.backend.webclient.WebClientFactory;
+import com.mulittle.skeleton.backend.webclient.WebTestClientFactory;
 
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)
@@ -22,7 +22,7 @@ public class CompaniesService {
   private final WebTestClient baseClient;
 
   @Autowired
-  public CompaniesService(WebClientFactory webClientFactory) {
+  public CompaniesService(WebTestClientFactory webClientFactory) {
     this.baseClient = webClientFactory.getBaseWebClient();
   }
 

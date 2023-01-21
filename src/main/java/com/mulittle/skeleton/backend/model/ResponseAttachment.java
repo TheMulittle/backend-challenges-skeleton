@@ -9,7 +9,7 @@ public class ResponseAttachment extends AbstractAttachment  {
   private String status;
   
   public ResponseAttachment() {
-    super("Request");
+    super("Response");
   }
 
   @Override

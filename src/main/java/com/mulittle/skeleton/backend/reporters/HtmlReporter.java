@@ -38,7 +38,6 @@ public class HtmlReporter implements ConcurrentEventListener {
     private static Map<String, ExtentTest> scenarios = new ConcurrentHashMap<String, ExtentTest>();
     private static ThreadLocal<ExtentTest> stepNode = new ThreadLocal<>();
     private static ThreadLocal<TestStep> testStep = new ThreadLocal<>();
-    private static ThreadLocal<Result> testStepResult = new ThreadLocal<>();
 
 
     public HtmlReporter(String path) {
