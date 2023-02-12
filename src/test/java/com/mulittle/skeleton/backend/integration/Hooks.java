@@ -23,7 +23,7 @@ public class Hooks {
 
   @AfterStep
   public void attachRequest(Scenario scenario) {
-    scenario.attach(SerializationUtils.serialize(evidenceContext.getAttachments()), "text/plain", null);
+    scenario.attach(SerializationUtils.serialize(evidenceContext.getAttachments()), "application/json", null);
   }
   
 }

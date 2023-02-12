@@ -5,6 +5,7 @@ Feature: Company registration
     Background:
       Given a company that is not registred
 
+    @TC:BS-10
     Example: a company can be registred
       When I register the company
       Then the response status code is 201

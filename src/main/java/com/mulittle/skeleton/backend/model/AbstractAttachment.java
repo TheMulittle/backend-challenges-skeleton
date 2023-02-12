@@ -8,7 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class AbstractAttachment implements Serializable {
+
   protected final String type;
+  protected String endpoint;
   protected String header;
   protected String body;
   

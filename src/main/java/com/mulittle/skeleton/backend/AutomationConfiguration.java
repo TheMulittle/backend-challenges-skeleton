@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration 
 @ComponentScan("com.mulittle.skeleton.backend")
 @PropertySource("classpath:application.properties")
-public class SpringConfiguration {
+public class AutomationConfiguration {
   @Bean
   @Scope(value = SCOPE_CUCUMBER_GLUE, proxyMode = ScopedProxyMode.TARGET_CLASS)
   public ObjectMapper objectMapper() {

@@ -12,7 +12,7 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("com/mulittle/skeleton/backend/integration")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:build/cucumber-report.html, com.mulittle.skeleton.backend.reporters.HtmlReporter:build/extentReport/Spark.html")
+@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:build/cucumber-report.html, com.mulittle.skeleton.backend.reporters.HtmlReporter:build/extentReport/Spark.html, com.mulittle.skeleton.backend.reporters.XRayReporter")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.mulittle.skeleton.backend.integration")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "@wip")
 public class RunWipTests {

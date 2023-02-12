@@ -1,17 +1,14 @@
+plugins {
+	id "com.graphql_java_generator.graphql-gradle-plugin" version "${graphQLPluginVersion}"
+	id 'java'
+}
+
 wrapper {
     gradleVersion = '7.5.1'
 }
 
 group 'com.mulittle.skeleton.backend'
-version '2.0-SNAPSHOT'
-
-apply plugin: 'java'
-
-java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
-  }
-}
+version '2.1-SNAPSHOT'
 
 project.ext {
     lombokVersion = '1.18.20'
@@ -22,6 +19,12 @@ project.ext {
     junitVersion = '5.9.1'
     cucumberVersion = '7.8.0'
     slf4jVersion = '2.0.2'
+}
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(16))
+  }
 }
 
 dependencies {
@@ -64,6 +67,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:4.10.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.10.0'
     testImplementation 'org.assertj:assertj-core:3.24.1'
+
+    implementation "com.graphql-java-generator:graphql-java-client-runtime:${graphQLPluginVersion}"
+    implementation 'com.graphql-java:graphql-java-extended-scalars:20.0'
 }
 
 repositories {
@@ -77,6 +83,10 @@ tasks.withType(Test) {
     // between different examples and scenarios.
     systemProperty "cucumber.junit-platform.naming-strategy", "long"
     systemProperty "baseUrl", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
+    systemProperty "testExecution", System.getProperty("testExecution")
+    systemProperty "xRayId", System.getProperty("xRayId")
+    systemProperty "xRaySecret", System.getProperty("xRaySecret")
+    systemProperty "xRayBaseUrl", System.getProperty("xRayBaseUrl")
     systemProperty "org.freemarker.loggerLibrary", "none"
     testLogging {
         showStandardStreams = true
@@ -93,4 +103,25 @@ task wip(type: Test) {
 
 task it(type: Test) {
    include '**/RunCucumberTest.class'  
+}
+
+sourceSets {
+  main {
+    java {
+      srcDir '/build/generated/sources/graphqlGradlePlugin'
+    }
+  }
+}
+
+generateClientCodeConf {
+	packageName = 'com.graphql.generated'
+	customScalars = [ [
+			graphQLTypeName: "JSON",
+            javaType: "graphql.scalars.object.JsonScalar",
+            graphQLScalarTypeStaticField: "graphql.scalars.ExtendedScalars.Json"
+	] ]
+
+	copyRuntimeSources = true
+	generateDeprecatedRequestResponse = false
+	separateUtilityClasses = true
 }
