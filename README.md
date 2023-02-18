@@ -42,6 +42,33 @@ There are different options to run Cucumber test scenarios. They will be execute
 ./gradlew clean wip
 ```
 
+#### Updating test cases on XRay
+
+This project comes with a Cucumber Reporter responsible for updating XRay test runs in JIRA that are linked to a  particular test execution. More about XRay [here](https://docs.getxray.app/display/XRAYCLOUD/About+Xray)
+
+Scenarios that have a tag following `@TC:CC-NN` format are eligeble to be updated. In the format, CC-NN is the JIRA ID of a XRay test case, such as `PB-11`. They are eligible, but not necessarly will be updated as two conditions need to be met: the integration needs to be enabled and the Test Case with id `CC-NN` must to be linked to the test execution
+
+To enable the integration, the following command line arguments must be passed to Gradle:
+
+* -DtestExecution: the test execution JIRA ID whose test runs we want to update. Ex: "BS-11"
+* -DxRayId: XRay's client ID. More information [here](https://docs.getxray.app/display/XRAYCLOUD/Authentication+-+REST)
+* -DxRaySecret: XRay's client secret. More information [here](https://docs.getxray.app/display/XRAYCLOUD/Authentication+-+REST)
+* -DxRayBaseUrl: XRay's base URL. For cloud JIRA, it will always be <https://xray.cloud.getxray.app/api>
+
+Example command to run tests marked with @wip and update test runs of a particular test execution in XRay:
+
+```bash
+./gradlew clean wip \
+-DtestExecution=[JIRA Test Execution] \
+-DxRayId=[Client ID] \ 
+-DxRaySecret=[Client Secret] \ 
+-DxRayBaseUrl="https://xray.cloud.getxray.app/api" 
+```
+
+#### Debugging integration tests
+
+While some IDEs have integrated debuging capabilities for Gradle that makes the debug initialization transparent for the developers , others don't. Therefore use `./gradlew_debug` if you want to open a debug session for 'wip' that can be attached by your favorite debugger. Parameters, such `-DtestExecutionId`, can be passed normally
+
 ## Using the mock server
 
 This skeleton project is shipped with wiremock files (`test/resources/wiremock` and `test/resources/services.json`) so you have a base mock server to play with. More details on how to use it can be found [here](https://wiremock.org/studio/docs/getting-started/desktop/)

@@ -1,0 +1,3 @@
+ ./gradlew wip -Dtest.debug=true --debug-jvm "$@"
+ 
+ 
