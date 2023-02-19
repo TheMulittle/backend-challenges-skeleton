@@ -28,8 +28,10 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
+import lombok.extern.slf4j.Slf4j;
 
 // TODO: this is a raw version of the reporter, further PRs will enchance it
+@Slf4j
 public class XRayReporter implements ConcurrentEventListener {
 
     private static String testExecutionId = System.getProperty("testExecution");
@@ -44,13 +46,13 @@ public class XRayReporter implements ConcurrentEventListener {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
 
-        if(testExecutionId == null) {
-            System.out.println("Disabling XRay reporter as there isn't a testExecution");
+       if(testExecutionId == null || testExecutionId.isEmpty()) {
+            log.info("Disabling XRay reporter as there isn't a -DtestExecution property set");
             return;
         }
 
         if(XRAY_BASE_URL == null) {
-            throw new RuntimeException("A testExecution ID has been provided, but xRayBaseUrl is missing");
+            throw new RuntimeException("-DtestExecution parameter has been provided, but -DxRayBaseUrl is missing");
         }
 
         publisher.registerHandlerFor(TestRunStarted.class, event -> {
@@ -111,7 +113,7 @@ public class XRayReporter implements ConcurrentEventListener {
         String testExecutionInternalId = xRayService.getTestExecutionInternalId(testExecutionId);
 
         if(testExecutionInternalId == null) {
-            throw new RuntimeException("Test execution does not exist");
+            throw new RuntimeException("Test execution '%s' does not exist in JIRA".formatted(testExecutionId));
         }
 
         internalTestExecutionId.set(testExecutionInternalId);
@@ -127,8 +129,7 @@ public class XRayReporter implements ConcurrentEventListener {
         Optional<String> jiraTestCaseTag = event.getTestCase().getTags().stream().filter(tag -> tag.startsWith("@TC:")).findFirst();
        
         if(!jiraTestCaseTag.isPresent()) {
-            //TODO user proper log, this should be 'Warn' level
-            System.out.println("This test scenario does not have a test case ID");
+            log.warn("Test scenario does not have tag starting with '@TC:'' ");
             return;
         }
 
@@ -137,7 +138,7 @@ public class XRayReporter implements ConcurrentEventListener {
         String internalTestCaseId = xRayService.getTestCaseInternalId(testCaseId);
 
         if(internalTestCaseId == null) {
-            throw new RuntimeException("Test case not in test execution");
+            log.error("Test case '{1}' is not linked to test execution", testCaseId);
         }
 
         String testRunInternalId = xRayService.getTestRunInternalId(internalTestCaseId, internalTestExecutionId.get());
@@ -151,8 +152,6 @@ public class XRayReporter implements ConcurrentEventListener {
 
     private void stepFinished(TestStepFinished event) throws ClassNotFoundException, GraphQLRequestExecutionException {
         if (testRunInternalIdLocal.get() == null) {
-            //TODO proper loggin
-            System.out.println("Test run does not exist in XRay");
             return;
         }
 
@@ -176,8 +175,6 @@ public class XRayReporter implements ConcurrentEventListener {
         String testRunInternalId = testRunInternalIdLocal.get();
 
         if (testRunInternalId == null) {
-            //TODO proper login
-            System.out.println("Test case does not exist in XRay");
             return;
         }
 
@@ -205,8 +202,6 @@ public class XRayReporter implements ConcurrentEventListener {
 
     private void embed(EmbedEvent event) throws ClassNotFoundException, GraphQLRequestExecutionException {
         if (testRunInternalIdLocal.get() == null) {
-            //TODO proper log
-            System.out.println("Test case does not exist in XRay");
             return;
         }
 
