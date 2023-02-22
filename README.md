@@ -4,7 +4,7 @@
 
 Ever needed to start a new test automation framework for APIs but suffered from analysis paralysis due to the enormous amount of options for creating a test framework? This project aims to help you by giving a base project that you can further enchance / modify as per your needs. The project includes:
 
-* Modern stack: Gradle 7, JUnit 5, Cucumber 7, Spring WebTestClient
+* Modern stack: Gradle 8, JUnit 5, Cucumber 7, Spring WebTestClient
 * Html Reporter to generate a good looking report with rich information such as all HTTP requests/responses logged for each step
 * Support for parallel execution out of the box
 * Unit tests for non-glue code classes
