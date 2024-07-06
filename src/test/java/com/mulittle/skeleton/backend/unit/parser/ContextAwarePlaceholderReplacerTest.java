@@ -1,48 +1,114 @@
 package com.mulittle.skeleton.backend.unit.parser;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.UUID;
 
-import org.junit.jupiter.api.Tag;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mulittle.skeleton.backend.context.PlaceholderContext;
+import com.mulittle.skeleton.backend.context.Context;
 import com.mulittle.skeleton.backend.parser.ContextAwarePlaceholderReplacer;
 
 @ExtendWith(MockitoExtension.class)
 public class ContextAwarePlaceholderReplacerTest {
 
   @Mock
-  PlaceholderContext context;
+  Context context;
+
+  @Mock
+  UUID uuidMock;
+
 
   @Test
-  public void return_json_with_replaced_string_when_there_is_a_placeholder()
-      throws IOException, URISyntaxException {
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder ℙ${} for a String")
+  public void return_json_with_replaced_string_when_there_is_a_context_placeholder() {
+    // Arranje
+    String originalPayload =       
+    """ 
+      {
+        "name": "ℙ${placeholder}"
+      }
+    """;
 
-    //Arrange
-    Path jsonPath = Paths.get(getClass().getClassLoader().getResource("com/mulittle/skeleton/backend/unit/parser/json_with_placeholder.json").toURI());
-    String jsonWithPlaceholder = Files.readString(jsonPath);
+    String expected =       
+    """ 
+      {
+        "name": "abcd"
+      }
+    """;
 
-    when(context.getAttributeAs("objectKey.attributeKey", String.class)).thenReturn("Name");
+    ContextAwarePlaceholderReplacer contextAwarePlaceholderReplacer = new ContextAwarePlaceholderReplacer(context);
+    when(context.findAs("placeholder", String.class)).thenReturn("abcd");
 
-    //Act
-    String jsonWihtoutPlaceholder = ContextAwarePlaceholderReplacer.replace(jsonWithPlaceholder, context);
+    // Act
+    String actual = contextAwarePlaceholderReplacer.replace(originalPayload);
 
-    //Assert
-    JsonNode node = new ObjectMapper().readTree(jsonWihtoutPlaceholder);
-    assertThat(node.get("property").asText(), is("Name"));
+    // Assert
+    Assertions.assertThat(expected).isEqualTo(actual);
   }
 
+  @Test
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder ℙ${} for a Number")
+  public void return_json_with_replaced_integer_when_there_is_a_context_placeholder() {
+    // Arranje
+    String originalPayload =       
+    """ 
+      {
+        "name": ℙ${placeholder}
+      }
+    """;
+
+    String expected =       
+    """ 
+      {
+        "name": 123.0
+      }
+    """;
+
+    ContextAwarePlaceholderReplacer contextAwarePlaceholderReplacer = new ContextAwarePlaceholderReplacer(context);
+    when(context.findAs("placeholder", String.class)).thenReturn("123.0");
+
+    // Act
+    String actual = contextAwarePlaceholderReplacer.replace(originalPayload);
+
+    // Assert
+    Assertions.assertThat(expected).isEqualTo(actual);
+  }
+
+  @Test
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace generated placeholder ℙ%{}")
+  public void return_json_with_replaced_integer_when_there_is_a_generation_placeholder() {
+    // Arranje
+    String originalPayload =       
+    """ 
+      {
+        "name": ℙ%{UUID, placeholder}
+      }
+    """;
+
+    String expected =       
+    """ 
+      {
+        "name": 0e8a6599-e030-469c-a4af-32a8b8767727
+      }
+    """;
+
+    ContextAwarePlaceholderReplacer contextAwarePlaceholderReplacer = new ContextAwarePlaceholderReplacer(context);
+    UUID uuid = UUID.fromString("0e8a6599-e030-469c-a4af-32a8b8767727");
+    MockedStatic<UUID> uuidMock = Mockito.mockStatic(UUID.class);
+    uuidMock.when(() -> UUID.randomUUID()).thenReturn(uuid);
+
+    // Act
+    String actual = contextAwarePlaceholderReplacer.replace(originalPayload);
+
+    // Assert
+    Assertions.assertThat(actual).isEqualTo(expected);
+  }
 }

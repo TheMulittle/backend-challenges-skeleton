@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.integration;
+package com.mulittle.skeleton.backend.integration.steps;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulittle.skeleton.backend.context.PlaceholderContext;
 import com.mulittle.skeleton.backend.context.StoryContext;
 import com.mulittle.skeleton.backend.model.Company;
-import com.mulittle.skeleton.backend.parser.ContextAwarePlaceholderReplacer;
 import com.mulittle.skeleton.backend.parser.JsonMapper;
 import com.mulittle.skeleton.backend.services.CompaniesService;
 
@@ -36,8 +35,8 @@ public class CompanyStepDefinitions {
 
     @DocStringType
     public Map<String, Object> json(String docString) throws JsonMappingException, JsonProcessingException {
-        String body = ContextAwarePlaceholderReplacer.replace(docString, placeholderContext);
-        return JsonMapper.jsonStringToMap(body);
+        //String body = ContextAwarePlaceholderReplacer.replace(docString, placeholderContext);
+        return JsonMapper.jsonStringToMap(docString);
     }
 
     private <T> T deserializeByteArrayTo(byte[] x, Class<T> clazz) throws StreamReadException, DatabindException, IOException {

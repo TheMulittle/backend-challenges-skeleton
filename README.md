@@ -82,6 +82,88 @@ we don´t have a work around (in the future Wiremock will be substituted, meanwh
 
 **NOTE 2:** even if run the tests in sequence, some scenarios will pass and others will fail. That´s on porpouse to show both passed and failed scenarios
 
+## The framework
+
+### Sending requests and asserting responses
+
+There are two flavours of sending requests and asserting the response content that can be used
+    1. Directly defining the request payload and response body in the step
+    2. Having dedicated steps for sending requests and asserting their contents
+
+For the first case, the developer is required to write the steps following the example on XXXXXXX
+For the second case:
+
+Defining the request payload directly in the payload is usually straightforward. It is just a matter of using the step `When I send request to '/endpoint' with payload` and then specifying the payload as triple quotted
+string. For example:
+
+```text
+When I send request to '/endpoint' with payload
+""" 
+  {
+    "property1": "value",
+    "property2": {
+      "innerProperty": 0
+    }
+  }
+""" 
+```
+
+### Placeholders
+
+It is not so straightforward, tough, when dynamic values are needed. For instance, consider a scenario wherein a new user needs to be registred, but a unique user is required everytime, how to handle such scenario? Placeholders are the answer. For example:
+
+When I send request to '/endpoint' with payload
+"""
+  {
+    "userName": "New user %[UUID]",
+  }
+"""
+
+In above payload, the placeholder `%[UUID]` will be substituted by a randomly generated UUID. Then an assertion can be made using:
+
+```text
+And response body is
+"""
+  {
+    "message": "User created successfully!"
+  }
+"""
+```
+
+What happens if there is a need for checking that this value appears in the response as well? A more complex placeholder can be used:
+
+```text
+When I send request to '/endpoint' with payload
+"""
+  {
+    "userName": "New user ![userID=%[UUID]]",
+  }
+"""
+```
+
+In above payload, the placeholder have two functions: first it will generate a random UUID; secondly it will assign this value to a variable called "userID" that can be latter retrieved. So the following step may be used:
+
+```text
+Then response body is
+"""
+  {
+    "userName": "User with the following name was created: New user $[userID]"
+  }
+"""
+```
+
+In the response, `$[userID]` will be replaced by the value stored in 'userID' variable
+
+What can be done if the variable value is required in the request endpoint? A placeholder can simply be used in the step with a stored variable: 
+
+```text
+When I send request to '/$[userId]' with payload
+```
+
+### Running tests in isolation
+
+@isolated
+
 ## Licensing
 
 This project is licensed under BSD3. Feel free fork it and change it as you need as long as you comply with BSD3

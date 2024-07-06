@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.integration;
+package com.mulittle.skeleton.backend.integration.steps;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
