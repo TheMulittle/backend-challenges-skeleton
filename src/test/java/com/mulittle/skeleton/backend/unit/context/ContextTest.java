@@ -71,8 +71,8 @@ public class ContextTest {
     //Act
     //Assert
     Assertions.assertThatThrownBy(() -> context.findAs(OBJECT_KEY, Map.class))
-    .isInstanceOf(ClassCastException.class)
-    .hasMessageContaining("Cannot get [object] as type [interface java.util.Map]. The actual type is [class java.lang.Object]");
+      .isInstanceOf(ClassCastException.class)
+      .hasMessageContaining("Cannot get [object] as type [interface java.util.Map]. The actual type is [class java.lang.Object]");
   }
 
   @Test

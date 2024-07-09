@@ -1,39 +1,58 @@
 Feature: There are two flavours of sending requests and asserting the response content that can be used
 
-  Rule:  
+  Rule: the json request payload and json reponse body can be passed directly to generic steps
 
     @TC:BS-10
-    Example: 
+    Example: whole request payload and whole response body can be used
 
-      When I send request to "/company" with payload
+      When API Consumer sends a "POST" request to "/companies" endpoint with payload
       """ 
         {
-          "name": "New company"
+          "name": "Not registred company"
         }
       """
       Then the response status code is 201
       And response body is
       """ 
         {
-          "name": "Company created successfully"
+          "name": "Not registred company"
         }
       """
 
     @TC:BS-11
-    Example:
+    Example: request payload and response body can have placeholders of many types
 
-
-      When I send request to '/department' with payload
+      When API Consumer sends a "POST" request to '/department' endpoint with payload
       """ 
         {
-          "name": "New department ℙ!{departmentID=ℙ%{UUID}}"
+          "name": "New department ℙ%|UUID_departmentID|"
         }
       """
       Then the response status code is 201
       And response body is
       """ 
         {
-          "name": "Department with the following name was created: New department 𝒫${departmentID}"
+          "id": ℙ=|Integer_0_2147483647|,
+          "name": "New department ℙ$|departmentID|"
+        }
+      """
+
+    @TC:BS-12
+    Example: partial response body can be checked
+
+      When API Consumer sends a "POST" request to '/department' endpoint with payload
+      """ 
+        {
+          "name": "New department ℙ%|UUID_departmentID|"
+        }
+      """
+      Then the response status code is 201
+      And response body contains
+      """ 
+        {
+          ...
+          "name": "New department ℙ${departmentID}"
+          ...
         }
       """
 
@@ -46,14 +65,15 @@ Feature: There are two flavours of sending requests and asserting the response c
       When I send request to '/𝒫${companyID}/department' with payload
       """ 
         {
-          "name": "New department 𝒫%{Integer,departmentID}"
+          "name": "New department ℙ%|Integer_departmentID|"
         }
       """
       Then the response status code is 201
       And response body is
       """ 
         {
-          "name": "Company with the following name was created: New department 𝒫${departmentID}"
+          "id": ℙ@|Integer_0_2147483647|
+          "name": "Company with the following name was created: New department ℙ$|departmentID|"
         }
       """
       
@@ -71,11 +91,10 @@ Feature: There are two flavours of sending requests and asserting the response c
       And response body is 
       """
       {
-        "err": "The company 𝒫${company.name} already exists"
+        "err": "The company ℙ${company.name} already exists"
       }
       """
 
-    @wip
     Example: a company can be deleted
       When I register the company
       And I delete the company

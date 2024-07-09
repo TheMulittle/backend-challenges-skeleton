@@ -14,4 +14,10 @@ public class JsonMapper {
 
     return new ObjectMapper().readValue(jsonString, typeRef);
   }
+
+  public static Object jsonStringToObject(String jsonString) throws JsonMappingException, JsonProcessingException {
+    TypeReference<Object> typeRef = new TypeReference<Object>() {};
+
+    return new ObjectMapper().readValue(jsonString, typeRef);
+  }
 }

@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyStepDefinitions {
 
-    private final CompaniesService companiesService;
+    /*private final CompaniesService companiesService;
 
     private final StoryContext requestContext;
 
@@ -71,17 +71,10 @@ public class CompanyStepDefinitions {
         requestContext.response = response;
     }
 
-    @Then("the response status code is {int}")
-    public void checkStatusCode(int statusCode) {
-        ResponseSpec lastResponse = (ResponseSpec) requestContext.response;
-        lastResponse.expectStatus()
-                .isEqualTo(statusCode);
-    }
-
     @Then("response body is")
     public void matchBody(Map<String, Object> expected) throws JsonMappingException, JsonProcessingException {
         ResponseSpec lastResponse = (ResponseSpec) requestContext.response;
         Map<String, Object> actual = JsonMapper.jsonStringToMap(new String(lastResponse.expectBody().returnResult().getResponseBodyContent()));
         Assertions.assertThat(actual).containsAllEntriesOf(expected);
-    }
+    }*/
 }

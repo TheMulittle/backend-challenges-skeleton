@@ -13,7 +13,7 @@
   },
   "response" : {
     "status" : 201,
-    "body" : "{\n  \"id\": 10,\n  \"name\": \"{{jsonPath request.body '$.name'}}\"\n}",
+    "body" : "{\n  \"name\": \"{{jsonPath request.body '$.name'}}\"\n}",
     "headers" : { },
     "transformers" : [ "response-template" ]
   },
@@ -37,6 +37,6 @@
       }
     }
   },
-  "insertionIndex" : 4,
+  "insertionIndex" : 3,
   "postServeActions" : [ ]
 }

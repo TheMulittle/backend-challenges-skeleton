@@ -1,21 +1,37 @@
 package com.mulittle.skeleton.backend.parser;
 
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.mulittle.skeleton.backend.context.Context;
 
+@Component
+@Scope(SCOPE_CUCUMBER_GLUE)
 public class ContextAwarePlaceholderReplacer {
+
+  private final static String PLACEHOLDER_PATTERN = "ℙ(.)\\|(.*?)\\|";
+
+  private final static String INCOMPLETE_GENERATIVE_ARGUMENTS_MESSAGE = 
+  """
+    Generative placeholder has less arguments than expected. It should have at least two but have [%s]. 
+    Generative placeholder arguments should follow the format [Operation]_[argument1]_[argument2] but it was [%s]
+  """;
+
+  private final static String INVALID_OPERATION_MESSAGE = "Invalid placeholder operation [%s]";
+
+  private final static String INVALID_OPERATOR_MESSAGE = "Invalid operator for generative placeholder [%s]";
 
   private final Context context;
 
-  private final String PLACEHOLDER_PATTERN = "ℙ(.)\\{(.*?)\\}";
-
+  @Autowired
   public ContextAwarePlaceholderReplacer(Context context) {
     this.context = context;
   }
@@ -27,16 +43,7 @@ public class ContextAwarePlaceholderReplacer {
 
     while (matcher.find()) {
       String value = "";
-      switch (matcher.group(1)) {
-        case "$":
-          value = extractPlaceholderReplacer(matcher.group(2));
-          break;
-
-        case "%":
-          value = generativePlaceholder(matcher.group(2));
-        default:
-          break;
-      }
+      value = extract(matcher.group(1), matcher.group(2));
       matcher.appendReplacement(jsonWithPlaceholderReplaced, value);
     }
     matcher.appendTail(jsonWithPlaceholderReplaced);
@@ -44,21 +51,35 @@ public class ContextAwarePlaceholderReplacer {
     return jsonWithPlaceholderReplaced.toString();
   }
 
-  private String generativePlaceholder(String arguments) {
-    String[] argumentArray = arguments.split(",");
-    String value;
-    switch (argumentArray[0]) {
+  private String extract(String operation, String arguments) {
+    switch (operation) {
+      case "$":
+        return extractPlaceholderReplacer(arguments.trim());
+
+      case "%":
+        return extractGenerativePlaceholder(arguments.trim());
+
+      default:
+        throw new IllegalArgumentException(INVALID_OPERATION_MESSAGE.formatted(operation));
+        
+    }
+  }
+
+  private String extractGenerativePlaceholder(String arguments) {
+    String[] argumentArray = arguments.split("_");
+    if(argumentArray.length < 2) {
+      throw new IllegalArgumentException(INCOMPLETE_GENERATIVE_ARGUMENTS_MESSAGE.formatted(argumentArray.length, arguments));
+    }
+
+    switch (argumentArray[0].trim()) {
       case "UUID":
         String uuid = UUID.randomUUID().toString();
-        context.put(argumentArray[1], uuid);
-        value = uuid;
-        break;
-        
+        context.put(argumentArray[1].trim(), uuid);
+        return uuid;
+
       default:
-        throw new RuntimeErrorException(null);
+        throw new IllegalArgumentException(INVALID_OPERATOR_MESSAGE.formatted(argumentArray[0]));
     }
-    // TODO Auto-generated method stub
-    return value;
   }
 
   private String extractPlaceholderReplacer(String key) {

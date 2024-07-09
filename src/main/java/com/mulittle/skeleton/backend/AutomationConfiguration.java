@@ -20,13 +20,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AutomationConfiguration {
   @Bean
   @Scope(value = SCOPE_CUCUMBER_GLUE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-  public ObjectMapper objectMapper() {
-    return new ObjectMapper();
+  public Map<String, Object> contextItems() {
+    return new HashMap<>();
   }
 
   @Bean
   @Scope(value = SCOPE_CUCUMBER_GLUE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-  public Map<String, Object> context() {
-    return new HashMap<>();
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
   }
 }
