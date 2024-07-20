@@ -31,6 +31,12 @@ public class AssertionDifference {
   public String reason;
 
   public Object getMessage() {
-    return DIFFERENCE_MESSAGE.formatted(path, actual.toString(), expected.toString(), reason);
+    return DIFFERENCE_MESSAGE.formatted(path, getFormatted(actual), getFormatted(expected), reason);
+  }
+
+  public String getFormatted(Object object) {
+    if(object instanceof String string) return "".concat("\"").concat(string).concat("\"");
+
+    return object.toString();
   }
 }

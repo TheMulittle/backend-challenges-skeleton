@@ -3,21 +3,26 @@ package com.mulittle.skeleton.backend.parser;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class MapAssertions {
 
   private static final String KEY_NOT_PRESENT_REASON = "key [%s] from the expected map does not exist in actual map";
 
+  private static final String MAPS_OF_DIFFERENT_SIZE = "actual and expected maps have different sizes, actual size is [%s] and expected size is [%s]";
+
+  private static final String NOT_A_LIST = "expected field is a List but actual field is [%s]";
+
+  private static final String NOT_A_MAP = "expected field is a Map but actual field is [%s]";
+
+  private static final String LIST_OF_DIFFERENT_SIZES = "actual and expected lists have different sizes, actual size is [%s] and expected size is [%s]";
+
   private final List<AssertionDifference> assertionsDifferences;
 
   private Map<String, ?> actualMap;
 
-  private StringBuilder currentPath;
-
   public MapAssertions() {
     this.assertionsDifferences = new LinkedList<>();
-    this.currentPath = new StringBuilder();
-    currentPath.append("$");
   }
 
   public MapAssertions assertThat(Map<String, ?> actualMap) {
@@ -26,33 +31,99 @@ public class MapAssertions {
   }
 
   public void matches(Map<String, ?> expectedMap) {
-    assertMap(expectedMap);
+    assertMap("$", actualMap, expectedMap);
     throwIfAssertionFailed();   
   }
 
-  private void assertMap(Map<String, ?> expectedMap) {
+  private void assertMap(String currentPath, Map<String, ?> actualMap, Map<String, ?> expectedMap) {
+
+    if(actualMap.size() != expectedMap.size()) {
+      AssertionDifference assertionDifference = new AssertionDifference(currentPath, actualMap, expectedMap, MAPS_OF_DIFFERENT_SIZE.formatted(actualMap.size(), expectedMap.size()));
+      assertionsDifferences.add(assertionDifference);
+      return;
+    }
+
     expectedMap.entrySet().forEach(expectedEntry -> {
 
         if(!actualMap.containsKey(expectedEntry.getKey())) {
-          AssertionDifference assertionDifference = new AssertionDifference(currentPath.toString(), actualMap, expectedMap, KEY_NOT_PRESENT_REASON.formatted(expectedEntry.getKey()));
+          AssertionDifference assertionDifference = new AssertionDifference(currentPath, actualMap, expectedMap, KEY_NOT_PRESENT_REASON.formatted(expectedEntry.getKey()));
           assertionsDifferences.add(assertionDifference);
+          return;
         }
 
-        if(expectedEntry.getValue() instanceof Integer value) {
-          assertInteger(actualMap.get(expectedEntry.getKey()), value);
-        }
+        Object expectedEntryValue = expectedEntry.getValue();
+        String expectedEntryKey = expectedEntry.getKey();
+        Object actualEntryValue = actualMap.get(expectedEntryKey);
+
+        assertEntry(currentPath, expectedEntryKey, actualEntryValue, expectedEntryValue);
 
 
     });    
   }
 
-  private void assertInteger(Object actualValue, Integer expectedValue) {
-    /*if(!expectedValue.equals(actualValue)) {
-      AssertionError x = new AssertionError("""
-          joao
-          """);
-      assertionsErrors.add(x);
-    }*/
+  private void assertEntry(String currentPath, String extraPath, Object actual, Object expected) {
+    final String newPath = currentPath.concat(".").concat(extraPath);
+
+    if(expected instanceof List value) {
+      
+      assertList(newPath, actual, value);
+
+      return;
+    }
+
+    if(expected instanceof Map value) {
+      if(!(actual instanceof Map)) {
+        String message = NOT_A_MAP.formatted(actual.getClass());
+        AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, message);
+        assertionsDifferences.add(asssertionDifference);
+        return;
+      }
+      assertMap(newPath, (Map) actual, (Map) value);
+      return;
+    }
+    
+    if(expected instanceof String value) {
+      assertString(newPath, actual, value);
+      return;
+    }
+
+    assertOthers(newPath, actual, expected);
+    return;
+  }
+
+  private void assertList(final String newPath, Object actual, List value) {
+    if(!(actual instanceof List)) {
+      AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, NOT_A_LIST.formatted(actual.getClass()));
+      assertionsDifferences.add(asssertionDifference);
+      return;
+    }
+
+    if(((List) actual).size() != value.size()) {
+      String message = LIST_OF_DIFFERENT_SIZES.formatted(((List) actual).size(), value.size());
+      AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, message);
+      assertionsDifferences.add(asssertionDifference);
+      return;
+    }
+
+    IntStream.range(0, value.size())
+      .forEach(idx -> {
+        assertEntry(newPath, "[%d]".formatted(idx), ((List) actual).get(idx), value.get(idx));
+      }
+    );
+  }
+
+  private void assertString(String path, Object actualValue, String expectedValue) {
+    if(!expectedValue.equals(actualValue)) {
+      AssertionDifference asssertionDifference = new AssertionDifference(path, actualValue, expectedValue);
+      assertionsDifferences.add(asssertionDifference);
+    }
+  }
+
+  private void assertOthers(String path, Object actualValue, Object expectedValue) {
+    if(!expectedValue.equals(actualValue)) {
+      AssertionDifference asssertionDifference = new AssertionDifference(path, actualValue, expectedValue);
+      assertionsDifferences.add(asssertionDifference);
+    }
   }
 
   
