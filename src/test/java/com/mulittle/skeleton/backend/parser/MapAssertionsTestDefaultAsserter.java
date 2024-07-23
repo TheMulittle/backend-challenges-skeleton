@@ -1,5 +1,6 @@
 package com.mulittle.skeleton.backend.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,9 +10,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
-public class MapAssertionsTest {
-  
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class MapAssertionsTestDefaultAsserter {
+
   @Test
   @DisplayName("MapAssertions#matches does not throw error when maps match")
   void testAssertMapsMatch() {
@@ -30,6 +31,7 @@ public class MapAssertionsTest {
     actual.put("integer", 5);
     actual.put("float", 5.0f);
     actual.put("boolean", true);
+    actual.put("null", null);
 
     Map<String, Object> expected = new HashMap();
     Map<String, Object> expectedMapInsideList = new HashMap();
@@ -45,8 +47,9 @@ public class MapAssertionsTest {
     expected.put("integer", 5);
     expected.put("float", 5.0f);
     expected.put("boolean", true);
+    expected.put("null", null);
 
-    // Act 
+    // Act
     // Assert
     Assertions.assertThatNoException()
         .isThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected));
@@ -55,7 +58,7 @@ public class MapAssertionsTest {
 
   @Test
   @DisplayName("MapAssertions#matches throws multiples assertions due to its soft nature")
-  void thorws_multiple_assertions_failures() {
+  void throws_multiple_assertions_failures() {
     // Arranje
     Map<String, Integer> actual = new HashMap();
     actual.put("key", 5);
@@ -88,12 +91,12 @@ public class MapAssertionsTest {
   @DisplayName("MapAssertions#matches throws error when maps have different sizes")
   void throws_error_when_maps_have_different_sizes() {
     // Arranje
-    Map<String, Integer> actual = new HashMap();
-    actual.put("key", 5);
-    actual.put("anotherKey", 10);
+    Map<String, Long> actual = new HashMap();
+    actual.put("key", 5l);
+    actual.put("anotherKey", 10l);
 
-    Map<String, Integer> expected = new HashMap();
-    expected.put("key", 5);
+    Map<String, Long> expected = new HashMap();
+    expected.put("key", 5l);
 
     // Act
     // Assert
@@ -101,11 +104,11 @@ public class MapAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             """
-                field with path '$' differ:
-                - actual value  : {anotherKey=10, key=5}
-                - expected value: {key=5}
-                actual and expected maps have different sizes, actual size is [2] and expected size is [1]
-                """);
+            field with path '$' differ:
+            - actual value  : {anotherKey=10, key=5}
+            - expected value: {key=5}
+            actual and expected maps have different sizes, actual size is [2] and expected size is [1]
+            """);
   }
 
   @Test
@@ -138,27 +141,95 @@ public class MapAssertionsTest {
   @DisplayName("MapAssertions#matches throws assertion error when an expected map key does not exist in actual map")
   void throws_error_when_expected_key_does_not_exist_in_actual_map() {
     // Arranje
-    Map<String, Integer> actual = new HashMap();
-    actual.put("id", 5);
+    Map<String, Long> actual = new HashMap();
+    actual.put("id", 5l);
 
-    Map<String, Integer> expected = new HashMap();
-    expected.put("idx", 5);
+    Map<String, Long> expected = new HashMap();
+    expected.put("idx", 5l);
 
     // Act
     // Assert
     Assertions.assertThatThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected))
-      .isInstanceOf(AssertionError.class)
+        .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
-        """
-                field with path '$' differ:
-                - actual value  : {id=5}
-                - expected value: {idx=5}
-                key [idx] from the expected map does not exist in actual map
+            """ 
+            field with path '$' differ:
+            - actual value  : {id=5}
+            - expected value: {idx=5}
+            key [idx] from the expected map does not exist in actual map
+            """);
+  }
+
+  @Test
+  @DisplayName("MapAssertions#matches throws error when actual property is null and expected is Long")
+  void z2() {
+    // Arranje
+    Map<String, Long> actual = new HashMap();
+    actual.put("key", null);
+
+    Map<String, Integer> expected = new HashMap();
+    expected.put("key", 5);
+
+    // Act
+    // Assert
+    Assertions.assertThatThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected))
+        .isInstanceOf(AssertionError.class)
+        .hasMessageContaining(
+            """
+                field with path '$.key' differ:
+                - actual value  : null
+                - expected value: 5
                 """);
   }
 
   @Test
-  @DisplayName("MapAssertions#assertMapsMatch throws error when actual property is String and expected property is Integer")
+  @DisplayName("MapAssertions#matches throws error when actual property is null and expected is List")
+  void z3() {
+    // Arranje
+    Map<String, Integer> actual = new HashMap();
+    actual.put("key", null);
+
+    Map<String, List<Object>> expected = new HashMap();
+    List<Object> expectedList = new ArrayList<>();
+    expected.put("key", expectedList);
+
+    // Act
+    // Assert
+    Assertions.assertThatThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected))
+        .isInstanceOf(AssertionError.class)
+        .hasMessageContaining(
+            """
+                field with path '$.key' differ:
+                - actual value  : null
+                - expected value: []
+                """);
+  }
+
+  @Test
+  @DisplayName("MapAssertions#matches throws error when actual property is null and expected is Map")
+  void z4() {
+    // Arranje
+    Map<String, Integer> actual = new HashMap();
+    actual.put("key", null);
+
+    Map<String, Map<String, Object>> expected = new HashMap();
+    Map<String, Object> innerMap = new HashMap();
+    expected.put("key", innerMap);
+
+    // Act
+    // Assert
+    Assertions.assertThatThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected))
+        .isInstanceOf(AssertionError.class)
+        .hasMessageContaining(
+            """
+                field with path '$.key' differ:
+                - actual value  : null
+                - expected value: {}
+                """);
+  }
+
+  @Test
+  @DisplayName("MapAssertions#assertMapsMatch throws error when actual property is String and expected property is Long")
   void throws_error_when_expected_value_is_integer_and_actual_value_is_string() {
     // Arranje
     Map<String, String> actual = new HashMap();
@@ -238,17 +309,17 @@ public class MapAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             """
-            field with path '$.key' differ:
-            - actual value  : 5
-            - expected value: 5.0
-            """);
+                field with path '$.key' differ:
+                - actual value  : 5
+                - expected value: 5.0
+                """);
   }
 
   @Test
   @DisplayName("MapAssertions#matches throws error when actual property is List and expected property is Map")
   void throws_error_when_actual_is_list_and_expected_is_map() {
     // Arranje
-    Map<String, List<Integer>>actual = new HashMap();
+    Map<String, List<Integer>> actual = new HashMap();
     List<Integer> actualInnerList = new LinkedList<>();
     actualInnerList.add(5);
 
@@ -258,19 +329,18 @@ public class MapAssertionsTest {
     Map<String, Object> expectedInnerMap = new HashMap();
     expectedInnerMap.put("innerKey", 5);
     expected.put("key", expectedInnerMap);
-    
+
     // Act
     // Assert
     Assertions.assertThatThrownBy(() -> new MapAssertions().assertThat(actual).matches(expected))
-    .isInstanceOf(AssertionError.class)
-    .hasMessageContaining(
-    """
-    field with path '$.key' differ:
-    - actual value  : [5]
-    - expected value: {innerKey=5}
-    expected field is a Map but actual field is [class java.util.LinkedList]
-    """
-    );
+        .isInstanceOf(AssertionError.class)
+        .hasMessageContaining(
+            """
+                field with path '$.key' differ:
+                - actual value  : [5]
+                - expected value: {innerKey=5}
+                expected field is a Map but actual field is [class java.util.LinkedList]
+                """);
   }
 
   @Test
@@ -319,11 +389,11 @@ public class MapAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             """
-            field with path '$.key' differ:
-            - actual value  : []
-            - expected value: [5]
-            actual and expected lists have different sizes, actual size is [0] and expected size is [1]
-            """);
+                field with path '$.key' differ:
+                - actual value  : []
+                - expected value: [5]
+                actual and expected lists have different sizes, actual size is [0] and expected size is [1]
+                """);
   }
 
   @Test
@@ -346,9 +416,9 @@ public class MapAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             """
-            field with path '$.key.[0]' differ:
-            - actual value  : 4
-            - expected value: 5
-            """);
+                field with path '$.key.[0]' differ:
+                - actual value  : 4
+                - expected value: 5
+                """);
   }
 }

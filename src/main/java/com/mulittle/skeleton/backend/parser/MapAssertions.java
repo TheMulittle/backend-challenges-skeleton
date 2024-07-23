@@ -3,8 +3,10 @@ package com.mulittle.skeleton.backend.parser;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MapAssertions {
 
   private static final String KEY_NOT_PRESENT_REASON = "key [%s] from the expected map does not exist in actual map";
@@ -21,8 +23,21 @@ public class MapAssertions {
 
   private Map<String, ?> actualMap;
 
+  private StringAsserter stringAsserter;
+
   public MapAssertions() {
     this.assertionsDifferences = new LinkedList<>();
+    this.stringAsserter = new DefaultStringAsserter();
+  }
+
+  public MapAssertions(StringAsserter stringAsserter) {
+    this.assertionsDifferences = new LinkedList<>();
+    this.stringAsserter = stringAsserter;
+  }
+
+  public MapAssertions withStringAsserter(StringAsserter stringAsserter) {
+    this.stringAsserter = stringAsserter;
+    return this;
   }
 
   public MapAssertions assertThat(Map<String, ?> actualMap) {
@@ -64,16 +79,19 @@ public class MapAssertions {
   private void assertEntry(String currentPath, String extraPath, Object actual, Object expected) {
     final String newPath = currentPath.concat(".").concat(extraPath);
 
-    if(expected instanceof List value) {
-      
-      assertList(newPath, actual, value);
+    if (expected == null) {
+      assertNull(newPath, actual, expected);
+      return;
+    }
 
+    if (expected instanceof List value) {
+      assertList(newPath, actual, value);
       return;
     }
 
     if(expected instanceof Map value) {
       if(!(actual instanceof Map)) {
-        String message = NOT_A_MAP.formatted(actual.getClass());
+        String message = actual != null ? NOT_A_MAP.formatted(actual.getClass()) : NOT_A_MAP.formatted(null);
         AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, message);
         assertionsDifferences.add(asssertionDifference);
         return;
@@ -91,9 +109,19 @@ public class MapAssertions {
     return;
   }
 
+  private void assertNull(String newPath, Object actual, Object expected) {
+    if (actual != null) {
+      AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, expected);
+      assertionsDifferences.add(asssertionDifference);
+      return;
+    }
+
+  }
+
   private void assertList(final String newPath, Object actual, List value) {
     if(!(actual instanceof List)) {
-      AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, NOT_A_LIST.formatted(actual.getClass()));
+      String message = actual != null ? NOT_A_LIST.formatted(actual.getClass()) : NOT_A_LIST.formatted(null);
+      AssertionDifference asssertionDifference = new AssertionDifference(newPath, actual, value, message);
       assertionsDifferences.add(asssertionDifference);
       return;
     }
@@ -113,10 +141,12 @@ public class MapAssertions {
   }
 
   private void assertString(String path, Object actualValue, String expectedValue) {
-    if(!expectedValue.equals(actualValue)) {
-      AssertionDifference asssertionDifference = new AssertionDifference(path, actualValue, expectedValue);
-      assertionsDifferences.add(asssertionDifference);
-    }
+      Optional<AssertionDifference> assertionDifference = stringAsserter.assertString(actualValue, expectedValue);
+
+      assertionDifference.ifPresent((value) -> {
+        value.setPath(path);
+        assertionsDifferences.add(value);
+      });
   }
 
   private void assertOthers(String path, Object actualValue, Object expectedValue) {

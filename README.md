@@ -115,11 +115,11 @@ It is not so straightforward, tough, when dynamic values are needed. For instanc
 When I send request to '/endpoint' with payload
 """
   {
-    "userName": "New user ℙ%|UUID_placeholder|",
+    "userName": "New user P%|UUID_placeholder|",
   }
 """
 
-In above payload, the placeholder `ℙ%|UUID_placeholder|` will be substituted by a randomly generated UUID. Then an assertion can be made using:
+In above payload, the placeholder `P%|UUID_placeholder|` will be substituted by a randomly generated UUID. Then an assertion can be made using:
 
 ```text
 And response body is
@@ -136,7 +136,7 @@ What happens if there is a need for checking that this value appears in the resp
 When I send request to '/endpoint' with payload
 """
   {
-    "userName": "New user ℙ%|UUID_userID|",
+    "userName": "New user P%|UUID_userID|",
   }
 """
 ```
@@ -147,17 +147,17 @@ In above payload, the placeholder have two functions: first it will generate a r
 Then response body is
 """
   {
-    "userName": "User with the following name was created: New user ℙ${userID}"
+    "userName": "User with the following name was created: New user P${userID}"
   }
 """
 ```
 
-In the response, `ℙ$|userID|` will be replaced by the value stored in 'userID' variable
+In the response, `P$|userID|` will be replaced by the value stored in 'userID' variable
 
 What can be done if the variable value is required in the request endpoint? A placeholder can simply be used in the step with a stored variable: 
 
 ```text
-When I send request to 'ℙ$|userID|' with payload
+When I send request to 'P$|userID|' with payload
 ```
 
 ### Running tests in isolation

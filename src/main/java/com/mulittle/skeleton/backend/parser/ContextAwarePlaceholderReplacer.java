@@ -17,7 +17,7 @@ import com.mulittle.skeleton.backend.context.Context;
 @Scope(SCOPE_CUCUMBER_GLUE)
 public class ContextAwarePlaceholderReplacer {
 
-  private final static String PLACEHOLDER_PATTERN = "ℙ(.)\\|(.*?)\\|";
+  private final static String PLACEHOLDER_PATTERN = "P(.)\\|(.*?)\\|";
 
   private final static String INCOMPLETE_GENERATIVE_ARGUMENTS_MESSAGE = 
   """
@@ -42,8 +42,11 @@ public class ContextAwarePlaceholderReplacer {
     StringBuffer jsonWithPlaceholderReplaced = new StringBuffer();
 
     while (matcher.find()) {
-      String value = "";
-      value = extract(matcher.group(1), matcher.group(2));
+      String value = extract(matcher.group(1), matcher.group(2));
+      //TODO add unit test for @ and use Optional
+      if(value.equals("")) {
+        continue;
+      }
       matcher.appendReplacement(jsonWithPlaceholderReplaced, value);
     }
     matcher.appendTail(jsonWithPlaceholderReplaced);
@@ -58,6 +61,9 @@ public class ContextAwarePlaceholderReplacer {
 
       case "%":
         return extractGenerativePlaceholder(arguments.trim());
+
+      case "@":
+        return "";
 
       default:
         throw new IllegalArgumentException(INVALID_OPERATION_MESSAGE.formatted(operation));

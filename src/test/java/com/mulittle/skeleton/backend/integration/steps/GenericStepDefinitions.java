@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mulittle.skeleton.backend.context.Context;
 import com.mulittle.skeleton.backend.parser.ContextAwarePlaceholderReplacer;
+import com.mulittle.skeleton.backend.parser.JsonAssertions;
 import com.mulittle.skeleton.backend.parser.JsonMapper;
 import com.mulittle.skeleton.backend.webclient.WebTestClientFactory;
 
@@ -61,9 +62,7 @@ public class GenericStepDefinitions {
     @Then("response body is")
     public void matchBody(String expected) throws JsonMappingException, JsonProcessingException {
         Response lastResponse = (Response) context.find("lastResponse");
-        Assertions.assertThat(JsonMapper.jsonStringToObject(lastResponse.getBody()))
-            .usingRecursiveComparison()
-            .isEqualTo(JsonMapper.jsonStringToObject(expected));
+        JsonAssertions.assertJsonsMatch(lastResponse.getBody(), contextAwarePlaceholderReplacer.replace(expected));
     }
 
     @Then("response body contains")

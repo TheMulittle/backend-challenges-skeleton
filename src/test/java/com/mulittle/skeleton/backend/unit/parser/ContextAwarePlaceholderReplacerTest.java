@@ -27,12 +27,12 @@ public class ContextAwarePlaceholderReplacerTest {
   UUID uuidMock;
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when invalid operation is passed to placeholder ℙ[operation]{[operator], [argument1], [argument2], ...}")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when invalid operation is passed to placeholder P[operation]{[operator], [argument1], [argument2], ...}")
   public void throws_exception_when_invalid_operation_is_used() {
     // Arranje
     String originalPayload = """
           {
-            "name": "ℙB|placeholder|"
+            "name": "PB|placeholder|"
           }
         """;
 
@@ -46,13 +46,13 @@ public class ContextAwarePlaceholderReplacerTest {
   }
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder ℙ${[placeholderName]} for a String")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder P${[placeholderName]} for a String")
   public void return_json_with_replaced_string_when_there_is_a_context_placeholder() {
     // Arranje
     String originalPayload =       
     """ 
       {
-                "name": "ℙ$|placeholder|"
+        "name": "P$|placeholder|"
       }
     """;
 
@@ -74,13 +74,13 @@ public class ContextAwarePlaceholderReplacerTest {
   }
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder ℙ${[placeholderName]} for a Number")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace context placeholder P${[placeholderName]} for a Number")
   public void return_json_with_replaced_integer_when_there_is_a_context_placeholder() {
     // Arranje
     String originalPayload =       
     """ 
       {
-        "name": ℙ$|placeholder|
+        "name": P$|placeholder|
       }
     """;
 
@@ -102,20 +102,20 @@ public class ContextAwarePlaceholderReplacerTest {
   }
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace replace UUID generative placeholder ℙ%{UUID, [placeholderName]}")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace replace UUID generative placeholder P%{UUID, [placeholderName]}")
   public void return_json_with_replaced_integer_when_there_is_a_generation_placeholder() {
     // Arranje
     String originalPayload =       
     """ 
       {
-                "name": "ℙ%{UUID, placeholder}"
+        "name": "P%|UUID_placeholder|"
       }
     """;
 
     String expected =       
     """ 
       {
-                "name": "0e8a6599-e030-469c-a4af-32a8b8767727"
+        "name": "0e8a6599-e030-469c-a4af-32a8b8767727"
       }
     """;
 
@@ -133,12 +133,12 @@ public class ContextAwarePlaceholderReplacerTest {
   }
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when there are less arguments than expected in UUID generative placeholder ℙ%{UUID, [placeholderName]}")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when there are less arguments than expected in UUID generative placeholder P%{UUID, [placeholderName]}")
   public void throws_exception_when_uuid_generative_placeholder_has_less_arguments() {
     // Arranje
     String originalPayload = """
           {
-            "name": "ℙ%|UUID|"
+            "name": "P%|UUID|"
           }
         """;
 
@@ -156,12 +156,12 @@ public class ContextAwarePlaceholderReplacerTest {
   }
 
   @Test
-  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when invalid operator is passed to generative placeholder ℙ%{[operation], [argument1], [argument2], ...}")
+  @DisplayName("ContextAwarePlaceholderReplacer#replace throws exception when invalid operator is passed to generative placeholder P%{[operation], [argument1], [argument2], ...}")
   public void throws_exception_when_invalid_operator_is_used() {
     // Arranje
     String originalPayload = """
           {
-            "name": "ℙ%|INVALID_name|"
+            "name": "P%|INVALID_name|"
           }
         """;
 

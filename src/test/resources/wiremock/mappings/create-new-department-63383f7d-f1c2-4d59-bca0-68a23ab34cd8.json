@@ -1,0 +1,42 @@
+{
+  "id" : "63383f7d-f1c2-4d59-bca0-68a23ab34cd8",
+  "name" : "Create new department",
+  "request" : {
+    "url" : "/v1/departments",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression" : "$.name",
+        "contains" : "department"
+      }
+    } ]
+  },
+  "response" : {
+    "status" : 201,
+    "body" : "{\n  \"id\": 0,\n  \"name\": \"{{jsonPath request.body '$.name'}}\"\n}",
+    "headers" : { },
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "63383f7d-f1c2-4d59-bca0-68a23ab34cd8",
+  "persistent" : true,
+  "priority" : 5,
+  "scenarioName" : "Companies",
+  "requiredScenarioState" : "Started",
+  "newScenarioState" : "2 companies",
+  "metadata" : {
+    "mocklab" : {
+      "created" : {
+        "at" : "2021-01-04T17:39:51.402Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      },
+      "updated" : {
+        "at" : "2021-01-04T17:50:17.104Z",
+        "via" : "ADMIN_API",
+        "by" : "7p1dp"
+      }
+    }
+  },
+  "insertionIndex" : 5,
+  "postServeActions" : [ ]
+}

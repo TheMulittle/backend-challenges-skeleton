@@ -22,18 +22,18 @@ Feature: There are two flavours of sending requests and asserting the response c
     @TC:BS-11
     Example: request payload and response body can have placeholders of many types
 
-      When API Consumer sends a "POST" request to '/department' endpoint with payload
+      When API Consumer sends a "POST" request to '/departments' endpoint with payload
       """ 
         {
-          "name": "New department ℙ%|UUID_departmentID|"
+          "name": "New department P%|UUID_departmentID|"
         }
       """
       Then the response status code is 201
       And response body is
       """ 
         {
-          "id": ℙ=|Integer_0_2147483647|,
-          "name": "New department ℙ$|departmentID|"
+          "id": P@|Long_1_2147483647|,
+          "name": "New department P$|departmentID|"
         }
       """
 
@@ -43,7 +43,12 @@ Feature: There are two flavours of sending requests and asserting the response c
       When API Consumer sends a "POST" request to '/department' endpoint with payload
       """ 
         {
-          "name": "New department ℙ%|UUID_departmentID|"
+          "name": "New department P%|UUID_departmentID|"[
+          "costCenter": {
+            label: "CC1"
+            name: "First Cost Center"
+          } 
+          "employees": 10
         }
       """
       Then the response status code is 201
@@ -51,7 +56,12 @@ Feature: There are two flavours of sending requests and asserting the response c
       """ 
         {
           ...
-          "name": "New department ℙ${departmentID}"
+          "name": "New department P${departmentID}"
+          "costCenter": {
+            ...
+            label: "CC1"
+            ...
+          }
           ...
         }
       """
@@ -62,18 +72,18 @@ Feature: There are two flavours of sending requests and asserting the response c
 
       Given a company that is not registred
       When I register the company
-      When I send request to '/𝒫${companyID}/department' with payload
+      When I send request to '/P$|companyID|/department' with payload
       """ 
         {
-          "name": "New department ℙ%|Integer_departmentID|"
+          "name": "New department P%|Integer_departmentID|"
         }
       """
       Then the response status code is 201
       And response body is
       """ 
         {
-          "id": ℙ@|Integer_0_2147483647|
-          "name": "Company with the following name was created: New department ℙ$|departmentID|"
+          "id": P@|Integer_0_2147483647|
+          "name": "Company with the following name was created: New department P$|departmentID|"
         }
       """
       
@@ -91,7 +101,7 @@ Feature: There are two flavours of sending requests and asserting the response c
       And response body is 
       """
       {
-        "err": "The company ℙ${company.name} already exists"
+        "err": "The company P$|company.name| already exists"
       }
       """
 

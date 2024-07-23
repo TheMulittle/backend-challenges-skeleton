@@ -1,20 +1,12 @@
 package com.mulittle.skeleton.backend.unit.parser;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.reactive.server.JsonPathAssertions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mulittle.skeleton.backend.parser.JsonAssertions;
-import com.mulittle.skeleton.backend.parser.JsonMapper;
 
 public class JsonAsserterPlaceholderAware {
 
@@ -40,7 +32,7 @@ public class JsonAsserterPlaceholderAware {
     String expected = 
     """
       {
-        "id": ℙ&|Integer_0_2147483647|
+        "id": P&|Integer_0_2147483647|
       }  
     """;
     
