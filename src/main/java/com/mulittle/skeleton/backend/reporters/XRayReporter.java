@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.reporters;
+/*package com.mulittle.skeleton.backend.reporters;
 
 import java.util.Base64;
 import java.util.List;
@@ -231,4 +231,4 @@ public class XRayReporter implements ConcurrentEventListener {
                 })
                 .collect(Collectors.toList());
     }
-}
+}*/

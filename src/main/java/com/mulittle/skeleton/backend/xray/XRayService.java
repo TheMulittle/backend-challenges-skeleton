@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.xray;
+/*package com.mulittle.skeleton.backend.xray;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -137,4 +137,4 @@ public class XRayService {
   public List<Evidence> getTestRunAttachmentLinks(String testRunId) throws GraphQLRequestExecutionException {
     return myGraphQLRepo.getTestRunAttachmentLinks(testRunId).getEvidence();
   }
-}
+}*/

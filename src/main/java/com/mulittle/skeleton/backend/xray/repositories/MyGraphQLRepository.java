@@ -1,4 +1,4 @@
-package com.mulittle.skeleton.backend.xray.repositories;
+/*package com.mulittle.skeleton.backend.xray.repositories;
 
 import java.util.List;
 
@@ -67,4 +67,4 @@ public interface MyGraphQLRepository {
 
 	@PartialRequest(requestType = RequestType.mutation, request = "{}")
 	public String updateTestRunComment(String testRunInternalId, String status) throws GraphQLRequestExecutionException;
-}
+}*/

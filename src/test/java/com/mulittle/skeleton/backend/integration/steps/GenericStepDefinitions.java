@@ -5,6 +5,7 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
@@ -33,12 +34,13 @@ public class GenericStepDefinitions {
 
     @When("API Consumer sends a {string} request to {string} endpoint with payload")
     public void sendRequest(String verb, String endpoint, String requestPayload) throws JsonMappingException, JsonProcessingException {
-        HttpMethod httpMethod = HttpMethod.resolve(verb);
+        HttpMethod httpMethod = HttpMethod.valueOf(verb);
         String replacedEndpoint = contextAwarePlaceholderReplacer.replace(endpoint);
         String replaceRequestPayload = contextAwarePlaceholderReplacer.replace(requestPayload);
         FluxExchangeResult<Object> response = webTestClientFactory.getBaseWebClient()
             .method(httpMethod)
             .uri(replacedEndpoint)
+            .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(replaceRequestPayload)
             .exchange()
             .returnResult(Object.class);
@@ -69,9 +71,6 @@ public class GenericStepDefinitions {
     public void bodyContains(String expected) throws JsonMappingException, JsonProcessingException {
         expected.replaceAll("\\.\\.\\.", "");
         Response lastResponse = (Response) context.find("lastResponse");
-        Assertions.assertThat(JsonMapper.jsonStringToObject(lastResponse.getBody()))
-            .usingRecursiveComparison()
-            .ignoringExpectedNullFields()
-            .isEqualTo(JsonMapper.jsonStringToObject(expected));
+        JsonAssertions.assertJsonsMatch(lastResponse.getBody(), contextAwarePlaceholderReplacer.replace(expected));
     }
 }

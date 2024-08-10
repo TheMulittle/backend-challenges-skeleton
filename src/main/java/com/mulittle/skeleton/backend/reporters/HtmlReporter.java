@@ -29,7 +29,7 @@ import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 
-public class HtmlReporter implements ConcurrentEventListener {
+/*public class HtmlReporter implements ConcurrentEventListener {
 
     private final ExtentSparkReporter spark;
     private final ExtentReports extent;
@@ -142,4 +142,4 @@ public class HtmlReporter implements ConcurrentEventListener {
             stepNode.get().info(MarkupHelper.createCodeBlock(attachment.getBody(),CodeLanguage.JSON));
         });
     }
-}
+}*/

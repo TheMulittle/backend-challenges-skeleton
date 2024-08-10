@@ -1,17 +1,17 @@
 plugins {
-	id "com.graphql_java_generator.graphql-gradle-plugin" version "${graphQLPluginVersion}"
+	//id "com.graphql_java_generator.graphql-gradle-plugin" version "${graphQLPluginVersion}"
 	id 'java'
 }
 
 wrapper {
-    gradleVersion = '8.0.1'
+    gradleVersion = '8.5'
 }
 
 group 'com.mulittle.skeleton.backend'
 version '2.1-SNAPSHOT'
 
 project.ext {
-    lombokVersion = '1.18.20'
+    lombokVersion = '1.18.34'
     jacksonVersion = '2.13.4'
     springVersion = '5.3.23'
     nettyVersion = '1.0.23'
@@ -23,7 +23,7 @@ project.ext {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(16))
+    languageVersion.set(JavaLanguageVersion.of(21))
   }
 }
 
@@ -36,15 +36,15 @@ dependencies {
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
-    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.4')
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.3.2')
     
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-    implementation 'org.springframework.boot:spring-boot-starter-test:2.7.4'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux:2.7.4'
+    implementation 'org.springframework.boot:spring-boot-starter-test:3.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.3.2'
     implementation "io.projectreactor.netty:reactor-netty-http:${nettyVersion}"
     implementation "com.jayway.jsonpath:json-path:${jsonpathVersion}"
     
@@ -68,8 +68,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:4.10.0'
     testImplementation 'org.assertj:assertj-core:3.24.1'
 
-    implementation "com.graphql-java-generator:graphql-java-client-runtime:${graphQLPluginVersion}"
-    implementation 'com.graphql-java:graphql-java-extended-scalars:20.0'
+    //implementation "com.graphql-java-generator:graphql-java-client-runtime:${graphQLPluginVersion}"
+    //implementation 'com.graphql-java:graphql-java-extended-scalars:20.0'
 
     implementation 'com.google.code.gson:gson:2.11.0'
 }
@@ -84,7 +84,7 @@ tasks.withType(Test) {
     // Work around. Gradle does not include enough information to disambiguate
     // between different examples and scenarios.
     systemProperty "cucumber.junit-platform.naming-strategy", "long"
-    systemProperty "baseUrl", System.getProperty("BASE_URL") ?: "http://localhost:8001/v1"
+    systemProperty "baseUrl", System.getProperty("BASE_URL") ?: "http://localhost:8080"
     systemProperty "testExecution", System.getProperty("testExecution")
     systemProperty "xRayId", System.getProperty("xRayId")
     systemProperty "xRaySecret", System.getProperty("xRaySecret")
@@ -115,15 +115,15 @@ sourceSets {
   }
 }
 
-generateClientCodeConf {
-	packageName = 'com.graphql.generated'
-	customScalars = [ [
-			graphQLTypeName: "JSON",
-            javaType: "graphql.scalars.object.JsonScalar",
-            graphQLScalarTypeStaticField: "graphql.scalars.ExtendedScalars.Json"
-	] ]
+// generateClientCodeConf {
+// 	packageName = 'com.graphql.generated'
+// 	customScalars = [ [
+// 			graphQLTypeName: "JSON",
+//             javaType: "graphql.scalars.object.JsonScalar",
+//             graphQLScalarTypeStaticField: "graphql.scalars.ExtendedScalars.Json"
+// 	] ]
 
-	copyRuntimeSources = true
-	generateDeprecatedRequestResponse = false
-	separateUtilityClasses = true
-}
+// 	copyRuntimeSources = true
+// 	generateDeprecatedRequestResponse = false
+// 	separateUtilityClasses = true
+// }

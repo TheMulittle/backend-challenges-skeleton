@@ -6,7 +6,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.NotImplementedException;
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -92,7 +93,7 @@ public class ContextAwarePlaceholderReplacer {
     try {
       return context.findAs(key, String.class);
     } catch (ClassCastException e) {
-      throw new NotImplementedException();
+      throw new RuntimeException("Not implemented");
     }
   }
 
